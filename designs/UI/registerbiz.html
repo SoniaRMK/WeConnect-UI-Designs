@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #dae3f0;">
+  <head>
+    <meta charset="utf-8">
+    <title>WeConnect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </head>
+  <body style="background-color: #dae3f0;">
+		<!--Navigation Bar-->
+	<nav class="navbar navbar-expand-md bg-primary navbar-dark">
+		<div class="container"> 
+			<a class="navbar-brand" href="index.html" style="color: #fff;font-size: 26px;font-weight: bold;">WeConnect</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" style="border: 2px solid;">
+		        <span class="navbar-toggler-icon" style="border: 2px solid;"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+				<ul	class="nav navbar-nav ml-auto" style="font-size: 18px;">
+					<li class="nav-item"><a href="businesses.html" style=" color: #fff;" class="nav-link">Businesses</a>
+					</li>
+					<li class="nav-item"><a href="contact.html" style=" color: #fff;"
+						class="nav-link">Contact</a>
+					</li>
+					<li class="nav-item"><a href="index.html" style=" color: #fff;" class="nav-link">Logout</a>
+					</li>
+					<li class="nav-item dropdown"><a href="#" style=" color: #fff;" class="nav-link dropdown-toggle" data-toggle="dropdown">
+						<img src="Logos/profilepc.png" class="rounded-circle" alt="Profile Picture" width="30" height="30"> </a>
+						<div class="dropdown-menu">
+						  <a class="dropdown-item" href="#" style="font-weight: bold;color: #007bff;text-align: center;">Hi Sonia RM</a><hr>
+						  <a class="dropdown-item" href="userdashboard.html">My Businesses</a>
+					      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changeUserPicModal">Change Profile Picture</a>
+					      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changePsswdModal">Change Password</a>
+					      <a class="dropdown-item" href="#">Change Display Name</a>
+					    </div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!--Navigation Bar END!!-->
+	<!--Register Business Form--> 
+	<div class="container">
+		  <br><br><br><h2>Register a Business</h2><br><br>
+		  <form action="#">
+		  	<div class="form-group">
+		       <label for="businessName">Business Name:</label>
+		       <input type="text" class="form-control" id="businessName" placeholder="Enter Business Name" name="businessName" required="required">
+		    </div>
+		    <div class="form-group">
+		      <label for="location">Location:</label>
+		      <select class="form-control" id="location" name="location">
+		        <option>Mbarara</option>
+		        <option>Kampala</option>
+		        <option>Gulu</option>
+		        <option>Soroti</option>
+		        <option>Hoima</option>
+		        <option>Kabarole</option>
+		      </select>
+		      <br>
+		      <label for="category">Category:</label>
+		      <select class="form-control" id="category" name="category">
+		        <option>Consulting</option>
+		        <option>Telecommunications</option>
+		        <option>Food and Beverages</option>
+		        <option>Computing and Technology</option>
+		        <option>Hotels and Accommodation</option>
+		        <option>Arts and Crafts</option>
+		      </select>
+		    </div>
+		    <div class="form-group">
+		      <label for="descr">Description:</label>
+		      <textarea class="form-control" rows="5" placeholder="Enter Description" id="descr" name="descr" required="required"></textarea>
+		    </div>
+		    <div class="form-group">
+			  <label for="userProfileIm"><strong>Upload Logo</strong></label>
+			  <input type="file" class="form-control-file" id="userProfileIm">
+			</div>
+		    <br>
+		    <button type="submit" class="btn btn-primary">Register</button>
+		  </form><br><br>
+		<!--Register Business Form End--> 
+	<!--Footer-->
+	<hr>
+	<div class="row">
+		<div class="col-xl-12">
+			<ul class="nav nav-pills nav-justified">
+				<li class="nav-item"><a href="#" class="nav-link">&#xA9; 2018 WeConnect.</a>
+				</li>
+				<li class="nav-item"><a href="#" class="nav-link">Terms of Service</a>
+				</li>
+				<li class="nav-item"><a href="#" class="nav-link">Privacy</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--Footer-->
+	</div>
+ </body>
+       
+</html>
