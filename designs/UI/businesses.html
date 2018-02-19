@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #dae3f0;">
+  <head>
+    <meta charset="utf-8">
+    <title>WeConnect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  </head>
+  <body style="background-color: #dae3f0;">
+	 <!--Navigation Bar-->
+	<nav class="navbar navbar-expand-md bg-primary navbar-dark">
+		<div class="container"> 
+			<a class="navbar-brand" href="index.html" style="color: #fff;font-size: 26px;font-weight: bold;">WeConnect</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" style="border: 2px solid;">
+		        <span class="navbar-toggler-icon" style="border: 2px solid;"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+				<ul	class="nav navbar-nav ml-auto" style="font-size: 18px;">
+					<li class="nav-item"><a href="#" style=" color: #fff;" class="nav-link">Businesses</a>
+					</li>
+					<li class="nav-item"><a href="contact.html" style=" color: #fff;"
+						class="nav-link">Contact</a>
+					</li>
+					<li class="nav-item"><a href="index.html" style=" color: #fff;" class="nav-link">Logout</a>
+					</li>
+					<li class="nav-item dropdown"><a href="#" style=" color: #fff;" class="nav-link dropdown-toggle" data-toggle="dropdown">
+						<img src="Logos/profilepc.png" class="rounded-circle" alt="Profile Picture" width="30" height="30"> </a>
+						<div class="dropdown-menu">
+						  <a class="dropdown-item" href="#" style="font-weight: bold;color: #007bff;text-align: center;">Hi Sonia RM</a><hr>
+						  <a class="dropdown-item" href="userdashboard.html">My Businesses</a>
+					      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changeUserPicModal">Change Profile Picture</a>
+					      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changePsswdModal">Change Password</a>
+					      <a class="dropdown-item" href="#">Change Display Name</a>
+					    </div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!--Navigation Bar END!!-->
+	<!--Search and Buttons!!-->
+	<div class="container">
+			<h1><br>Businesses<br><br></h1> 
+		<div class="row">
+			<div class="col-md-4">
+				<a href ="registerbiz.html">
+				 <button type="button" class="btn btn-primary btn-md">Register Business</button>
+				</a>
+			</div>
+			<div class="col-md-4"> <strong>Filter By:</strong>
+				<div class="btn-group"> <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">Location <span class="caret"></span></a>
+					<ul
+					class="dropdown-menu">
+						<li class="dropdown-item"><a href="#">Kabarole</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Kampala</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Gulu</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Soroti</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Hoima</a>
+						</li>
+						<li class="divider dropdown-item"></li>
+						<li class="dropdown-item"><a href="#">Other</a>
+						</li>
+						</ul>
+				</div>
+				<div class="btn-group"> <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">Category <span class="caret"></span></a>
+					<ul
+					class="dropdown-menu">
+						<li class="dropdown-item"><a href="#">Telecommunications</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Food and Bar</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Computing and Technology</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Hotels and Accommodation</a>
+						</li>
+						<li class="dropdown-item"><a href="#">Arts and Crafts</a>
+						</li>
+						<li class="divider dropdown-item"></li>
+						<li class="dropdown-item"><a href="#">Other</a>
+						</li>
+						</ul>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search" name="search">
+					<div class="input-group-btn">
+						<button class="btn btn-secondary" type="submit" style="background: #007bff; border: 1px solid #007bff; border-radius: unset;">
+							<i class="fas fa-search"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<br>
+	<!--Search and Buttons!!-->
+	<!--Business List-->
+	<div class="container" style="background-color: white; border-radius: 10px; padding: 20px;">
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+		<div class="media">
+			<div class="media-left">
+				<img src="Logos/logo.gif" class="media-object" style="width:60px; border: 3px solid #007bff;">
+			</div>
+			<div class="media-body" style="padding-left: 20px;">
+				 <h4 class="media-heading"><a href="business.html">Left-aligned</a></h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<hr>
+	</div>
+	<!--Business List End-->
+	<!--Footer-->
+	<hr>
+	<div class="row">
+		<div class="col-xl-12">
+			<ul class="nav nav-pills nav-justified">
+				<li class="nav-item"><a href="#" class="nav-link">&#xA9; 2018 WeConnect.</a>
+				</li>
+				<li class="nav-item"><a href="#" class="nav-link">Terms of Service</a>
+				</li>
+				<li class="nav-item"><a href="#" class="nav-link">Privacy</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--Footer-->
+
+	
+  </body>
+       
+</html>
