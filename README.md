@@ -1,1 +1,1 @@
-# WeConnect-UI-Designs
+# WeConnect
