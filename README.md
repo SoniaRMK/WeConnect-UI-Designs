@@ -31,9 +31,3 @@ WeConnect provides a platform that brings businesses and individuals together. T
 In case you don't want to clone this project to your computert but still want to test it out, you can simply go to ***https://soniarmk.github.io/index.html*** 
 
 Happy Browsing! :smile:
-
-  
-  
-  
-  
-  
