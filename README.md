@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=master)](https://travis-ci.org/SoniaRMK/WeConnect)
+
 # WeConnect
 This repository contains the description, a guide on how to clone and run the platform.
 
