@@ -15,23 +15,61 @@ WeConnect provides a platform that brings businesses and individuals together. T
   4.	Users can view businesses.
   5.	Users can give reviews about a business.
   6.	Users can search for businesses based on business location or business category.
+  
+  | EndPoint                                            | Functionality                                    |
+| ----------------------------------------------------- | ------------------------------------------------ |
+| [POST\   /api/v1/auth/register](#)                    | Creates a user account                           |
+| [POST\   /api/v1/auth/login](#)                       | Logs in a user                                   |
+| [POST\   /api/v1/auth/logout](#)                      | Logs out a user                                  |
+| [POST\   /api/v1/auth/reset-password](#)              | Password reset                                   |
+| [POST\   /api/v1/businesses](#)                       | Register a business                              |
+| [PUT\    /api/v1/businesses/\<int:bizid>](#)          | Updates a business profile                       |
+| [DELETE\ /api/v1/businesses/\<int:bizid>](#)          | Remove a business                                |
+| [GET\    /api/v1/businesses](#)                       | Retrieves all businesses                         |
+| [GET\    /api/v1/businesses/\<int:bizid>](#)          | Get a business                                   |
+| [GET\    /api/v1/businesses/\<int:bizid>/reviews](#)  | Get all reviews for a business                   |
 
 ### Prerequisites
   1.	HTML/CSS
   2.	Javascript/ES6
   3.	Python/Flask
   4.  GIT and Version Control  
-  
-### How to Clone and run WeConnect
-1. In order to clone this project, navigate to ***https://github.com/SoniaRMK/WeConnect***
-2. Then Change to the features branch, you should be able to see the green button on the right side wtih the words **"Clone or Download"**
-3. Click on the button to expand it, and copy the link shown.
-4. Go to your terminal and navigate to location where you want this project cloned
-5. Use the git command ***git clone url*** and press Enter
-6. Wait a few seconds/Minutes and Viola! This project will be cloned to your computer!
-7. To run the platform, simply double click on the **index.html** file and it will open in your default browser.
-8. Navigate through WeConnect using the available Nav Menu
 
-In case you don't want to clone this project to your computert but still want to test it out, you can simply go to ***https://soniarmk.github.io/index.html*** 
+## Technologies
+
+* Python 3.6 or 2.7
+* FLask Restful
+
+## Requirements
+
+* Install [Python](https://www.python.org/downloads/)
+* Run `pip install virtualenv` on command prompt
+* Run `pip install virtualenvwrapper-win` on command prompt
+* Run `set WORKON_HOME=%USERPROFILES%\Envs` on command prompt
+
+## Setup
+
+* Run `git clone` this repository and `cd` into the project root.
+* Run `mkvirtualenv venv` on command prompt
+* Run `workon venv` on command prompt
+* Run `pip install -r requirements.txt` on command prompt
+* Run `set FLASK_CONFIG=development` on command prompt
+* Run `set FLASK_APP=run.py` on command prompt
+* Run `flask run` on command prompt
+* View the app on `http://127.0.0.1:5000/`
+
+## Use endpoints
+
+* Run `python app/api/api_run.py` on command prompt
+* View the api on `http://127.0.0.1:5000/api/v1/`
+* Test it's usage with postman
+
+## Unittests
+
+* Run `pytest` on command prompt
+  
+## GitHub pages
+
+Go to [WeConnect](https://soniarmk.github.io/index.html)
 
 Happy Browsing! :smile:
