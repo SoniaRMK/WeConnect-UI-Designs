@@ -1,23 +1,58 @@
 from resources.lib import *
+from resources.businessAPI import businesses
 
 
-reviews = [
-    {'reviewMsg' : 'Perfect phones for a low price', 'businessID' : 2},
-    {'reviewMsg' : 'Bad customer Service', 'businessID' : 1},
-    {'reviewMsg' : 'Worth the Price', 'businessID' : 2},
-    {'reviewMsg' : 'Loved it', 'businessID' : 3},
-    {'reviewMsg' : 'Not worth it', 'businessID' : 2}
-]
+reviews = []
 
 class Review(Resource):
+    #Add a review to a business
     def post(self, bizid):
-        review = {
-            'reviewMsg': request.json['reviewMsg'], 
-            'businessID': bizid
-            }
-        reviews.append(review)
-        return jsonify({'Reviews': reviews})
-
+        business = [busi for busi in businesses if busi['businessID'] == bizid]
+        if business != []:
+            review = {
+                    'reviewMsg': request.json['reviewMsg'], 
+                    'businessID': bizid,
+                    # 'CreatedBy' : request.json['userEmail'],
+                    # 'userID' : 
+                    }
+            reviews.append(review)
+            message = {
+                    'status': "Success!",
+                    'message': "Review added successfully!!",
+                    }
+            resp = jsonify(message)
+            resp.status_code = 200
+        else:
+            message = {
+                    'status': "Not Found",
+                    'message': "Can't add review. Business not registered yet!!",
+                    }
+            resp = jsonify(message)
+            resp.status_code = 404
+        
+        return resp
+    #Get all reviews of a business
     def get(self, bizid):
+        business = [busi for busi in businesses if busi['businessID'] == bizid]
         reviewsbiz = [rev for rev in reviews if rev['businessID'] == bizid]
-        return jsonify({'Reviews': reviewsbiz})       
+        if business != [] and reviewsbiz != []:
+            message = {
+                'status': "Success",
+                'Reviews': reviewsbiz,
+            }
+            resp = jsonify(message)
+            resp.status_code = 200
+        elif business != [] and reviewsbiz == []:   
+              message = {
+                'status': "Not Found",
+                'message': "Business doesn't have reviews yet!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 404
+        else:
+            message = {
+                'status': "Not Found",
+                'message': "Business doesn't exist!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 404
