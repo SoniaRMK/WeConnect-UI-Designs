@@ -1,42 +1,115 @@
 from resources.lib import *
 
-businesses = [
-    {'businessID' : 1, 'businessName' : 'MTN', 'Location' : 'Kampala', 'Category' : 'Telecommunications', 'businessProfile': 'Best telecommunication company in Uganda'}, 
-    {'businessID' : 2, 'businessName' : 'Tecno', 'Location' : 'Kisoro', 'Category' : 'Telecommunications', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 3, 'businessName' : 'KFC', 'Location' : 'Kabarole', 'Category' : 'Restaurant', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 4, 'businessName' : 'Sheraton', 'Location' : 'Kampala', 'Category' : 'Hotel', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 5, 'businessName' : 'Arab COntractors', 'Location' : 'Kampala', 'Category' : 'Construction', 'businessProfile': 'Best telecommunication company in Uganda'},
-]
+businesses = []
 
 class Business(Resource):
-    #creates a new business
-    def post(self):
-        biz = {
-        'businessID' : businesses[-1]['businessID'] + 1,
-        'businessName' : request.json['businessName'],
-        'Location' : request.json['Location'], 
-        'Category' : request.json['Category'], 
-        'businessProfile': request.json['businessProfile']
-        }
-        businesses.append(biz)
-        return jsonify({'businesses': businesses})
     #gets a  business
     def get(self, bizid):
         biz = [business for business in businesses if business['businessID'] == bizid]
-        return jsonify({'business': biz[0]})
-    #deletees a business
+        if biz == []:
+            message = {
+            'status': "Not Found",
+            'message': 'Business Not registered yet!!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 404
+        else:
+            message = {
+            'status': "Success",
+            'business': biz[0],
+            }
+            resp = jsonify(message)
+            resp.status_code = 200
+
+        return resp
+
+    #deletes a business
     def delete(self, bizid):
         biz = [business for business in businesses if business['businessID']==bizid]
-        businesses.remove(biz[0])
+        if biz == []:
+            message = {
+            'status': "Not Found",
+            'message': 'Business Not registered yet!!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 404
+        else:
+            businesses.remove(biz[0])
+            message = {
+                'status': "success",
+                'message': 'Successfully Deleted!!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 200
+
+        return resp
+        
     #edits a  business
     def put(self, bizid):
-        biz = [biz for biz in businesses if biz['businessID'] == bizid]
+        biz = [business for business in businesses if business['businessID'] == bizid]
+        # if biz == []:
+        #     message = {
+        #             'status': "Not Found",
+        #             'message': 'Business Not registered yet!!',
+        #     }
+        #     resp = jsonify(message)
+        #     resp.status_code = 404
+        # biz = [biz for biz in businesses if (biz['Category'] == "Telecomm" and biz['businessName'] == )]
         biz[0]['businessName'] = request.json.get('businessName', biz[0]['businessName'])
         biz[0]['businessProfile'] = request.json.get('businessProfile', biz[0]['businessProfile'])
         biz[0]['Category'] = request.json.get('Category', biz[0]['Category'])
-        biz[0]['Location'] = request.json.get('Location', biz[0]['Location'])
-        return jsonify({'business': biz[0]})
+        biz[0]['Location'] = request.json.get('Location', biz[0]['Location']) 
+        business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
+        if len(business) > 1:
+            message = {
+                    'status': "Failed",
+                    'message': 'Business Already Exists!',
+                    }
+            resp = jsonify(message)
+            resp.status_code = 400
+        else:
+            message = {
+            'status': "Success",
+            'message': 'Business successfully Edited!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 400
+
+        return resp
+       # message = "Business successfully Edited!"
+        
+        #return jsonify({'Message': message}), 200
 
 class BusinessList(Resource):
+    #creates a new business
+    def post(self):
+        biz = {
+        'businessID' : len(businesses)+ 1,
+        'businessName' : request.json['businessName'],
+        'Location' : request.json['Location'], 
+        'Category' : request.json['Category'], 
+        'businessProfile': request.json['businessProfile'], 
+        'createdBy': request.json['createdBy']
+        }
+        business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
+        if len(business) == 0:
+            businesses.append(biz)
+            message = {
+            'status': "success",
+            'message': 'Business Successfully Created!!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 200
+      
+        else:
+            message = {
+            'status': "Failed",
+            'message': 'Business Already Created!',
+            }
+            resp = jsonify(message)
+            resp.status_code = 400
+
+        return resp
+    #Get all businesses
     def get(self):
         return jsonify({'businesses': businesses})
