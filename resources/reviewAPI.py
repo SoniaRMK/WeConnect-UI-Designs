@@ -1,20 +1,25 @@
 from resources.lib import *
 from resources.businessAPI import businesses
+from flask_restful.reqparse import RequestParser
 
 
 reviews = []
+
+#Validating the arguments
+review_validation = RequestParser(bundle_errors=True)
+review_validation.add_argument("reviewMsg", type=str, required=True, help="Review Message should be a string")
 
 class Review(Resource):
     @token_required
     #Add a review to a business
     def post(self, bizid):
+        review_args = review_validation.parse_args()  
         business = [busi for busi in businesses if busi['businessID'] == bizid]
         if business != []:
             review = {
-                    'reviewMsg': request.json['reviewMsg'], 
-                    'businessID': bizid,
-                    # 'CreatedBy' : request.json['userEmail'],
-                    # 'userID' : 
+                    'reviewMsg': review_args.reviewMsg, 
+                    'businessID': bizid,                    
+                    'createdBy': request.data['user'],
                     }
             reviews.append(review)
             message = {

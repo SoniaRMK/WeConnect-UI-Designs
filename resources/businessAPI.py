@@ -1,6 +1,15 @@
 from resources.lib import *
+from flask_restful.reqparse import RequestParser
 
 businesses = []
+
+#Validating the arguments
+business_validation = RequestParser(bundle_errors=True)
+business_validation.add_argument("businessName", type=str, required=True, help="Business Name must be a string")
+business_validation.add_argument("Category", type=str, required=True, help="Category must be a string")
+business_validation.add_argument("Location", type=str, required=True, help="Location must be a string")
+business_validation.add_argument("businessProfile", type=str, required=True, help="Business Profile must be a string")
+
 
 class Business(Resource):
     #gets a  business
@@ -49,12 +58,13 @@ class Business(Resource):
     #edits a  business
     @token_required
     def put(self, bizid):
+        business_args = business_validation.parse_args() 
         biz = [business for business in businesses if business['businessID'] == bizid]
-        biz[0]['businessName'] = request.json.get('businessName', biz[0]['businessName'])
-        biz[0]['businessProfile'] = request.json.get('businessProfile', biz[0]['businessProfile'])
-        biz[0]['Category'] = request.json.get('Category', biz[0]['Category'])
-        biz[0]['Location'] = request.json.get('Location', biz[0]['Location']) 
-        business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
+        biz[0]['businessName'] = business_args.businessName
+        biz[0]['businessProfile'] = business_args.businessProfile
+        biz[0]['Category'] = business_args.Category
+        biz[0]['Location'] = business_args.Location
+        business = [busi for busi in businesses if business_args.businessName == busi['businessName'] and business_args.Category == busi['Category']]
         if len(business) > 1:
             message = {
                     'status': "Failed",
@@ -79,13 +89,15 @@ class BusinessList(Resource):
     #creates a new business
     @token_required
     def post(self):
+        business_args = business_validation.parse_args() 
         biz = {
         'businessID' : len(businesses)+ 1,
-        'businessName' : request.json['businessName'],
-        'Location' : request.json['Location'], 
-        'Category' : request.json['Category'], 
-        'businessProfile': request.json['businessProfile'], 
-        'createdBy': request.data['user']
+        'businessName' : business_args.businessName,
+        'Location' : business_args.Location, 
+        'Category' : business_args.Category, 
+        'businessProfile': business_args.businessProfile, 
+        'createdBy': request.data['user'],
+        #'createdOn' : datetime.date
         }
         business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
         if len(business) == 0:
