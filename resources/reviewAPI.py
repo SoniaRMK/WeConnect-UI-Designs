@@ -5,6 +5,7 @@ from resources.businessAPI import businesses
 reviews = []
 
 class Review(Resource):
+    @token_required
     #Add a review to a business
     def post(self, bizid):
         business = [busi for busi in businesses if busi['businessID'] == bizid]
@@ -32,6 +33,7 @@ class Review(Resource):
         
         return resp
     #Get all reviews of a business
+    @token_required
     def get(self, bizid):
         business = [busi for busi in businesses if busi['businessID'] == bizid]
         reviewsbiz = [rev for rev in reviews if rev['businessID'] == bizid]
@@ -44,11 +46,11 @@ class Review(Resource):
             resp.status_code = 200
         elif business != [] and reviewsbiz == []:   
               message = {
-                'status': "Not Found",
-                'message': "Business doesn't have reviews yet!!",
-            }
-            resp = jsonify(message)
-            resp.status_code = 404
+                    'status': "Not Found",
+                    'message': "Business doesn't have reviews yet!!",
+                }
+              resp = jsonify(message)
+              resp.status_code = 404
         else:
             message = {
                 'status': "Not Found",
