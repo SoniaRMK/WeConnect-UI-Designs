@@ -4,6 +4,7 @@ businesses = []
 
 class Business(Resource):
     #gets a  business
+    @token_required
     def get(self, bizid):
         biz = [business for business in businesses if business['businessID'] == bizid]
         if biz == []:
@@ -24,6 +25,7 @@ class Business(Resource):
         return resp
 
     #deletes a business
+    @token_required
     def delete(self, bizid):
         biz = [business for business in businesses if business['businessID']==bizid]
         if biz == []:
@@ -45,16 +47,9 @@ class Business(Resource):
         return resp
         
     #edits a  business
+    @token_required
     def put(self, bizid):
         biz = [business for business in businesses if business['businessID'] == bizid]
-        # if biz == []:
-        #     message = {
-        #             'status': "Not Found",
-        #             'message': 'Business Not registered yet!!',
-        #     }
-        #     resp = jsonify(message)
-        #     resp.status_code = 404
-        # biz = [biz for biz in businesses if (biz['Category'] == "Telecomm" and biz['businessName'] == )]
         biz[0]['businessName'] = request.json.get('businessName', biz[0]['businessName'])
         biz[0]['businessProfile'] = request.json.get('businessProfile', biz[0]['businessProfile'])
         biz[0]['Category'] = request.json.get('Category', biz[0]['Category'])
@@ -82,6 +77,7 @@ class Business(Resource):
 
 class BusinessList(Resource):
     #creates a new business
+    @token_required
     def post(self):
         biz = {
         'businessID' : len(businesses)+ 1,
@@ -89,7 +85,7 @@ class BusinessList(Resource):
         'Location' : request.json['Location'], 
         'Category' : request.json['Category'], 
         'businessProfile': request.json['businessProfile'], 
-        'createdBy': request.json['createdBy']
+        'createdBy': request.data['user']
         }
         business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
         if len(business) == 0:
@@ -110,6 +106,8 @@ class BusinessList(Resource):
             resp.status_code = 400
 
         return resp
+    
     #Get all businesses
+    @token_required
     def get(self):
         return jsonify({'businesses': businesses})
