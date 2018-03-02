@@ -1,0 +1,33 @@
+Endpoint to get all reviews for a business
+---
+tags:
+  - Review
+parameters:
+  - name: Token
+    description: A json web token required to view reviews for a particular business
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Business ID
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Businesses found
+    schema: 
+      type: object
+      properties:
+        "reviews: ":
+          type: array
+  404:
+    description: No businesses found
+    schema: 
+      type: object
+      properties:
+        "message: ":
+          type: string
+          enum:
+            - "No reviews"

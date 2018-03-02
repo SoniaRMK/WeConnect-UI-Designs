@@ -1,22 +1,18 @@
-Endpoint to register a new user
+Endpoint to Login a user
 ---
 tags:
   - User
 parameters:
   - name: body
-    description: This contains user registration details
+    description: This contains user login details
     in: body
     required: true
     schema:
       type: object
       required:
-        - "displayName"
         - "userEmail"
         - "userPassword"
       properties:
-        displayName:
-          type: "string"
-          example: "SRMK"
         userEmail:
           type: "string"
           example: "soniquee@gmail.com"
@@ -27,20 +23,18 @@ parameters:
 
 responses:
   200:
-    description: User successfuly registered
+    description: User successfuly logged in
     schema: 
       type: object
       properties:
-        message:
+        token:
           type: string
-          enum:
-            - "Successfully Registered!"
   400:
-    description: User registration failed!
+    description: User Login failed
     schema: 
       type: object
       properties:
         message:
           type: string
           enum:
-            - "User already exists!"
+            - "Wrong Password and/or Email"

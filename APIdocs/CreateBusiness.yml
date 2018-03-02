@@ -1,0 +1,54 @@
+Endpoint to register a new business
+---
+tags:
+  - Business
+parameters:
+  - name: body
+    description: a json object with business details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "BusinessName"
+        - "BusinessProfile"
+        - "Category"
+        - "Location"
+      properties:
+        BusinessName:
+          type: "string"
+          example: "MTN"
+        BusinessProfile:
+          type: "string"
+          example: "We Provide telecommunication Solutions"
+        Category:
+          type: "string"
+          example: "Telecommunications"
+        Location:
+          type: "string"
+          example: "Fort Portal"
+  - name: Token
+    description: A json web token required to view a particular business
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Business successfuly created
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully added business"
+  400:
+    description: Business already registered
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Cannot register duplicate businesses!"

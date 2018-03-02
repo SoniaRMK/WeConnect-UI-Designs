@@ -1,0 +1,21 @@
+Endpoint to logout a user
+---
+tags:
+  - User
+# parameters:
+#   - name: Token
+#     description: A json web token required to sucessfully logout
+#     type: string
+#     in: header
+#     required: true
+
+responses:
+  200:
+    description: User logout successful
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully logged out"
