@@ -1,20 +1,25 @@
 from resources.lib import *
+import smtplib
+import random
 from flask_restful.reqparse import RequestParser
 
-
 users = []
+invalidTokens = []
 
 #Validating the arguments
 user_validation = RequestParser(bundle_errors=True)
+user_validation.add_argument("displayName", type=str, required=True, help="Name must be a valid string")
 user_validation.add_argument("userEmail", type=str, required=True, help="Email must be a valid email")
-user_validation.add_argument("userPassword", type=str, required=True, help="Password must be a valid email")
+user_validation.add_argument("userPassword", type=str, required=True, help="Password must be a valid string")
 
 
 class UserRegister(Resource):
+    @swag_from("../APIdocs/CreateUser.yml")
     def post(self): 
         user_args = user_validation.parse_args()     
         user = {
             'userID' : len(users) + 1,
+            'displayName' : user_args.displayName, 
             'userEmail' : user_args.userEmail,            
             'userPassword' : user_args.userPassword
             }
@@ -39,26 +44,56 @@ class UserRegister(Resource):
         return resp 
         
 class UserLogin(Resource):
+    @swag_from("../APIdocs/LoginUser.yml")
     def post(self):
         user_args = user_validation.parse_args()
         token = ''
         for u in users:
             if u['userEmail'] == user_args.userEmail and u['userPassword'] == user_args.userPassword:
-                token = jwt.encode({'user' : u['userEmail'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+                token = jwt.encode({'user' : u['displayName'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
             else:
-                return make_response('Could not verify!', 401)
-        return jsonify({'token' : token.decode('UTF-8')})
+                message = {
+                'status': "Bad Request",
+                'message': 'User cannot be verified!',
+                }
+                resp = jsonify(message)
+                resp.status_code = 400
+                return resp
+        message = {
+            'status': "Success",
+            'message': 'Logged in',
+            'token' : token.decode('UTF-8'),
+            }
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
 
 class UserLogout(Resource):
+    @swag_from("../APIdocs/LogoutUser.yml")
     @token_required
     def post(self):
-        
-        return jsonify({'Logged Out!!'})  
+        invalidTokens.append(request.headers['Authorization'].split(' ')[1])
+        return make_response('Successfully Logged out!', 200)
 
 class UserResetPassword(Resource):
+    @swag_from("../APIdocs/PasswordReset.yml")
     def post(self):
-        # for u in users:
-        #     if u['userEmail'] == request.json['userEmail']: 
-        #         u['userPassword'] == request.json['userPassword']  
-        #         users.append(u)  
-        return jsonify({'Password has been reset!!'})       
+        resp = jsonify({})
+        user_args = user_validation.parse_args()
+        for u in users:
+            if u['userEmail'] == user_args.userEmail:
+                u['userPassword'] = user_args.userPassword
+                message = {
+                    'status': "Success",
+                    'message': 'Password Reset'
+                 }
+                resp = jsonify(message)
+                resp.status_code = 200
+            else:
+                message = {
+                    'status': "Not Found",
+                    'message': 'User doesnot exist',
+                    }
+                resp = jsonify(message)
+                resp.status_code = 404
+        return resp

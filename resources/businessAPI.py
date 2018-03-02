@@ -13,6 +13,7 @@ business_validation.add_argument("businessProfile", type=str, required=True, hel
 
 class Business(Resource):
     #gets a  business
+    @swag_from("../APIdocs/ViewBusiness.yml")
     @token_required
     def get(self, bizid):
         biz = [business for business in businesses if business['businessID'] == bizid]
@@ -34,6 +35,7 @@ class Business(Resource):
         return resp
 
     #deletes a business
+    @swag_from("../APIdocs/DeleteBusiness.yml")
     @token_required
     def delete(self, bizid):
         biz = [business for business in businesses if business['businessID']==bizid]
@@ -56,16 +58,17 @@ class Business(Resource):
         return resp
         
     #edits a  business
+    @swag_from("../APIdocs/UpdateBusiness.yml")
     @token_required
     def put(self, bizid):
         business_args = business_validation.parse_args() 
         biz = [business for business in businesses if business['businessID'] == bizid]
-        biz[0]['businessName'] = business_args.businessName
-        biz[0]['businessProfile'] = business_args.businessProfile
-        biz[0]['Category'] = business_args.Category
-        biz[0]['Location'] = business_args.Location
         business = [busi for busi in businesses if business_args.businessName == busi['businessName'] and business_args.Category == busi['Category']]
-        if len(business) > 1:
+        if len(business) == 0:
+            biz[0]['businessName'] = business_args.businessName
+            biz[0]['businessProfile'] = business_args.businessProfile
+            biz[0]['Category'] = business_args.Category
+            biz[0]['Location'] = business_args.Location
             message = {
                     'status': "Failed",
                     'message': 'Business Already Exists!',
@@ -73,20 +76,19 @@ class Business(Resource):
             resp = jsonify(message)
             resp.status_code = 400
         else:
+
             message = {
             'status': "Success",
             'message': 'Business successfully Edited!',
             }
             resp = jsonify(message)
-            resp.status_code = 400
+            resp.status_code = 200
 
         return resp
-       # message = "Business successfully Edited!"
-        
-        #return jsonify({'Message': message}), 200
 
 class BusinessList(Resource):
     #creates a new business
+    @swag_from("../APIdocs/CreateBusiness.yml")
     @token_required
     def post(self):
         business_args = business_validation.parse_args() 
@@ -120,6 +122,7 @@ class BusinessList(Resource):
         return resp
     
     #Get all businesses
+    @swag_from("../APIdocs/ViewBusinesses.yml")
     @token_required
     def get(self):
         return jsonify({'businesses': businesses})

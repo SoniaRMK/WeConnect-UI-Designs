@@ -10,20 +10,22 @@ review_validation = RequestParser(bundle_errors=True)
 review_validation.add_argument("reviewMsg", type=str, required=True, help="Review Message should be a string")
 
 class Review(Resource):
+    @swag_from("../APIdocs/ViewReviews.yml")
     @token_required
     #Add a review to a business
     def post(self, bizid):
         review_args = review_validation.parse_args()  
+
         business = [busi for busi in businesses if busi['businessID'] == bizid]
+        review = {
+                'reviewMsg': review_args.reviewMsg, 
+                'businessID': bizid,                    
+                'createdBy': request.data['user'],
+                }
         if business != []:
-            review = {
-                    'reviewMsg': review_args.reviewMsg, 
-                    'businessID': bizid,                    
-                    'createdBy': request.data['user'],
-                    }
             reviews.append(review)
             message = {
-                    'status': "Success!",
+                    'status': review,
                     'message': "Review added successfully!!",
                     }
             resp = jsonify(message)
@@ -38,24 +40,25 @@ class Review(Resource):
         
         return resp
     #Get all reviews of a business
+    @swag_from("../APIdocs/AddReview.yml")
     @token_required
     def get(self, bizid):
         business = [busi for busi in businesses if busi['businessID'] == bizid]
         reviewsbiz = [rev for rev in reviews if rev['businessID'] == bizid]
-        if business != [] and reviewsbiz != []:
+        if business and reviewsbiz:
             message = {
                 'status': "Success",
                 'Reviews': reviewsbiz,
             }
             resp = jsonify(message)
             resp.status_code = 200
-        elif business != [] and reviewsbiz == []:   
-              message = {
+        elif business and not reviewsbiz:   
+            message = {
                     'status': "Not Found",
                     'message': "Business doesn't have reviews yet!!",
                 }
-              resp = jsonify(message)
-              resp.status_code = 404
+            resp = jsonify(message)
+            resp.status_code = 404
         else:
             message = {
                 'status': "Not Found",
@@ -63,3 +66,4 @@ class Review(Resource):
             }
             resp = jsonify(message)
             resp.status_code = 404
+        return resp
