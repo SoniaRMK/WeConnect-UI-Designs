@@ -16,7 +16,7 @@ WeConnect provides a platform that brings businesses and individuals together. T
   5.	Users can give reviews about a business.
   6.	Users can search for businesses based on business location or business category.
   
-  | EndPoint                                            | Functionality                                    |
+| EndPoint                                              | Functionality                                    |
 | ----------------------------------------------------- | ------------------------------------------------ |
 | [POST\   /api/v1/auth/register](#)                    | Creates a user account                           |
 | [POST\   /api/v1/auth/login](#)                       | Logs in a user                                   |
