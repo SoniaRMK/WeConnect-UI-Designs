@@ -1,0 +1,45 @@
+Endpoint to review business information using business id
+---
+tags:
+  - Review
+parameters:
+  - name: Token
+    description: A json web token required to view reviews for a particular business
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of the business
+    type: string
+    in: path
+    required: true
+  - name: body
+    description: This contains review details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "reviewMsg"
+      properties:
+        review_summary:
+          type: "string"
+          example: "Awesome Customer Service"
+
+responses:
+  200:
+    description: Business review successful
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: string
+  404:
+    description: No businesses found
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "Business does not exist"

@@ -17,7 +17,7 @@ WeConnect provides a platform that brings businesses and individuals together. T
   5.	Users can give reviews about a business.
   6.	Users can search for businesses based on business location or business category.
   
-  | EndPoint                                            | Functionality                                    |
+| EndPoint                                              | Functionality                                    |
 | ----------------------------------------------------- | ------------------------------------------------ |
 | [POST\   /api/v1/auth/register](#)                    | Creates a user account                           |
 | [POST\   /api/v1/auth/login](#)                       | Logs in a user                                   |
@@ -38,8 +38,8 @@ WeConnect provides a platform that brings businesses and individuals together. T
 
 ## Technologies
 
-* Python 3.6 or 2.7
-* FLask Restful
+* Python 3.6
+* Flask Restful
 
 ## Requirements
 
@@ -53,16 +53,15 @@ WeConnect provides a platform that brings businesses and individuals together. T
 * Run `git clone` this repository and `cd` into the project root.
 * Run `mkvirtualenv venv` on command prompt
 * Run `workon venv` on command prompt
-* Run `pip install -r requirements.txt` on command prompt
+* Run `pip freeze > requirements.txt` on command prompt
 * Run `set FLASK_CONFIG=development` on command prompt
-* Run `set FLASK_APP=run.py` on command prompt
-* Run `flask run` on command prompt
+* Run `python app.py` on command prompt
 * View the app on `http://127.0.0.1:5000/`
 
 ## Use endpoints
 
-* Run `python app/api/api_run.py` on command prompt
-* View the api on `http://127.0.0.1:5000/api/v1/`
+* Run `python app.py` on command prompt
+* View the api on `http://127.0.0.1:5000/api/v2`
 * Test it's usage with postman
 
 ## Unittests
