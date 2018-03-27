@@ -5,7 +5,7 @@ db.init_app(app)
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_email = db.Column(db.String(60), nullable=False, unique=True)
     user_password = db.Column(db.String(300), nullable=False,)
     #user_name = db.Column(db.String(60))
@@ -18,7 +18,7 @@ class User(db.Model):
     
 class Business(db.Model):
     __tablename__ = 'businesses'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     business_name = db.Column(db.String(60), nullable=False, unique=True)
     business_profile = db.Column(db.String(1000), nullable=False)
     location = db.Column(db.String(200), nullable=False)
@@ -36,7 +36,7 @@ class Business(db.Model):
 
 class Review(db.Model):
     __tablename__ = 'reviews'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     review_msg = db.Column(db.String(1000), nullable=False)
     business_id = db.Column(db.Integer, db.ForeignKey('businesses.id'))
     def __init__(self, review_msg, business_id):
