@@ -67,7 +67,7 @@ class UserLogin(Resource):
             resp.status_code = 401
             return resp
         
-        user = User.query.filter_by(email = useremail).first()
+        user = User.query.filter_by(user_email = useremail).first()
         if not user:
             message = {
                 'status': "Bad Request",
