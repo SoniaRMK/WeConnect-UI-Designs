@@ -24,6 +24,7 @@ class Business(db.Model):
     location = db.Column(db.String(200), nullable=False)
     category = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     reviews = db.relationship('Review', backref='business',
                                  lazy='dynamic')
     def __init__(self, business_name, business_profile, location, category, user_id):
@@ -39,6 +40,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     review_msg = db.Column(db.String(1000), nullable=False)
     business_id = db.Column(db.Integer, db.ForeignKey('businesses.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     def __init__(self, review_msg, business_id):
         self.review_msg = review_msg#pragma:no cover
         self.business_id = business_id
