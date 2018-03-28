@@ -42,11 +42,11 @@ class UserRegister(Resource):
             resp.status_code = 201
         except:
             message = {
-                'status': "Server Error",
-                'message': 'User cannot be registered!',
+                'status': "Conflict",
+                'message': 'User already exists!',
                 }
             resp = jsonify(message)
-            resp.status_code = 500 
+            resp.status_code = 409 
         
         db.session.close()
         return resp       

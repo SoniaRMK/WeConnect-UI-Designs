@@ -1,42 +1,159 @@
-from resources.lib import *
+from .resources import *
+from flask_restful.reqparse import RequestParser
+from models.models import Business
 
-businesses = [
-    {'businessID' : 1, 'businessName' : 'MTN', 'Location' : 'Kampala', 'Category' : 'Telecommunications', 'businessProfile': 'Best telecommunication company in Uganda'}, 
-    {'businessID' : 2, 'businessName' : 'Tecno', 'Location' : 'Kisoro', 'Category' : 'Telecommunications', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 3, 'businessName' : 'KFC', 'Location' : 'Kabarole', 'Category' : 'Restaurant', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 4, 'businessName' : 'Sheraton', 'Location' : 'Kampala', 'Category' : 'Hotel', 'businessProfile': 'Best telecommunication company in Uganda'},
-    {'businessID' : 5, 'businessName' : 'Arab COntractors', 'Location' : 'Kampala', 'Category' : 'Construction', 'businessProfile': 'Best telecommunication company in Uganda'},
-]
+
+#Validating the arguments
+business_validation = RequestParser(bundle_errors=True)
+business_validation.add_argument("business_name", type=str, required=True, help="Business Name must be a string")
+business_validation.add_argument("category", type=str, required=True, help="Category must be a string")
+business_validation.add_argument("location", type=str, required=True, help="Location must be a string")
+business_validation.add_argument("business_profile", type=str, required=True, help="Business Profile must be a string")
+
 
 class Business(Resource):
-    #creates a new business
-    def post(self):
-        biz = {
-        'businessID' : businesses[-1]['businessID'] + 1,
-        'businessName' : request.json['businessName'],
-        'Location' : request.json['Location'], 
-        'Category' : request.json['Category'], 
-        'businessProfile': request.json['businessProfile']
-        }
-        businesses.append(biz)
-        return jsonify({'businesses': businesses})
     #gets a  business
+    @swag_from("../APIdocs/ViewBusiness.yml")
+    @token_required
     def get(self, bizid):
-        biz = [business for business in businesses if business['businessID'] == bizid]
-        return jsonify({'business': biz[0]})
-    #deletees a business
+        business = Business.query.filter_by(id=bizid).first()
+        if not business:
+            message = {
+                'status': "Not Found",
+                'message': 'Business not registered yet!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 404
+            return resp
+
+        output = {}
+        output['Business Name'] = business.business_name
+        output['Business Profile'] = business.business_profile
+        output['Location'] = business.location
+        output['Category'] = business.category
+        
+        return jsonify({'business': output})
+
+    #deletes a business
+    @swag_from("../APIdocs/DeleteBusiness.yml")
+    @token_required
     def delete(self, bizid):
-        biz = [business for business in businesses if business['businessID']==bizid]
-        businesses.remove(biz[0])
+        userid = request.data['user']
+        business = Business.query.filter_by(id=bizid).first()
+        if business.user_id != userid:
+            message = {
+            'status': "Unathorized",
+            'message': "You cannot delete a business you didn't register!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 401
+        if not business:
+            message = {
+                'status': "Not Found",
+                'message': 'Business not registered yet!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 404
+            return resp
+
+        db.session.delete(business)
+        db.session.commit()
+
+        message = {
+            'status': "Success",
+            'message': 'Business successfully Deleted!',
+            }
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
+        
     #edits a  business
+    @swag_from("../APIdocs/UpdateBusiness.yml")
+    @token_required
     def put(self, bizid):
-        biz = [biz for biz in businesses if biz['businessID'] == bizid]
-        biz[0]['businessName'] = request.json.get('businessName', biz[0]['businessName'])
-        biz[0]['businessProfile'] = request.json.get('businessProfile', biz[0]['businessProfile'])
-        biz[0]['Category'] = request.json.get('Category', biz[0]['Category'])
-        biz[0]['Location'] = request.json.get('Location', biz[0]['Location'])
-        return jsonify({'business': biz[0]})
+        userid = request.data['user']
+        business = Business.query.filter_by(id=bizid).first()
+        if business.user_id != userid:
+            message = {
+            'status': "Unathorized",
+            'message': "You cannot Edit a business you didn't register!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 401
+        if not business:
+            message = {
+                'status': "Not Found",
+                'message': 'Business not registered yet!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 404
+            return resp
+        business.business_name = data['new_name']
+        business.business_profile = data['new_description']
+        business.location = data['new_location']
+        business.category = data['new_category']
+        message = {
+            'status': "Success",
+            'message': 'Business successfully Updated!',
+            }
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
+        
 
 class BusinessList(Resource):
+    #creates a new business
+    @swag_from("../APIdocs/CreateBusiness.yml")
+    @token_required
+    def post(self):
+        user = request.data['user']
+        business = Business(business_name=business_validation.parse_args().business_name, 
+                            category=business_validation.parse_args().category,
+                            location=business_validation.parse_args().location,
+                            business_profile=business_validation.parse_args().business_profile)
+                            #user_id=user)
+
+        try:
+            #user = models.User(user_email, user_password)
+            db.session.add(business)
+            db.session.commit()
+            message = {
+                'status': "Success",
+                'message': 'Business registered!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 201
+        except:
+            message = {
+                'status': "Conflict",
+                'message': 'Business already Exists!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 409 
+        
+        db.session.close()
+        return resp 
+    
+    #Get all businesses
+    @swag_from("../APIdocs/ViewBusinesses.yml")
+    @token_required
     def get(self):
-        return jsonify({'businesses': businesses})
+        businesses = Business.query.all()
+        if not businesses:
+            message = {
+                'status': "Not Found",
+                'message': 'No businesses found!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 404
+            return resp
+
+        business_list=[]
+        for business in business_list:
+            output={}
+            output['Business Name'] = business.business_name
+            output['Business Profile'] = business.business_profile
+            output['Location'] = business.location
+            output['Category'] = business.category
+            business_list.append(output)
+        return jsonify({'businesses': business_list})
