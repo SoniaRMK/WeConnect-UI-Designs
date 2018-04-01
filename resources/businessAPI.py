@@ -1,4 +1,4 @@
-from .resources import *
+from resources import *
 from flask_restful.reqparse import RequestParser
 from models.models import Business
 
@@ -11,7 +11,7 @@ business_validation.add_argument("location", type=str, required=True, help="Loca
 business_validation.add_argument("business_profile", type=str, required=True, help="Business Profile must be a string")
 
 
-class Business(Resource):
+class BusinessOne(Resource):
     #gets a  business
     @swag_from("../APIdocs/ViewBusiness.yml")
     @token_required
@@ -88,10 +88,12 @@ class Business(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-        business.business_name = data['new_name']
-        business.business_profile = data['new_description']
-        business.location = data['new_location']
-        business.category = data['new_category']
+
+        business.business_name=business_validation.parse_args().business_name
+        business_profile=business_validation.parse_args().business_profile
+        location=business_validation.parse_args().location
+        category=business_validation.parse_args().category
+        db.session.commit()
         message = {
             'status': "Success",
             'message': 'Business successfully Updated!',
@@ -107,11 +109,12 @@ class BusinessList(Resource):
     @token_required
     def post(self):
         user = request.data['user']
-        business = Business(business_name=business_validation.parse_args().business_name, 
-                            category=business_validation.parse_args().category,
-                            location=business_validation.parse_args().location,
-                            business_profile=business_validation.parse_args().business_profile)
-                            #user_id=user)
+        business = Business(
+            business_name=business_validation.parse_args().business_name,
+            business_profile=business_validation.parse_args().business_profile, 
+            location=business_validation.parse_args().location, 
+            category=business_validation.parse_args().category,
+            user_id=user)
 
         try:
             #user = models.User(user_email, user_password)
@@ -139,6 +142,7 @@ class BusinessList(Resource):
     @token_required
     def get(self):
         businesses = Business.query.all()
+        business_list=[]
         if not businesses:
             message = {
                 'status': "Not Found",
@@ -147,13 +151,13 @@ class BusinessList(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-
-        business_list=[]
-        for business in business_list:
-            output={}
-            output['Business Name'] = business.business_name
-            output['Business Profile'] = business.business_profile
-            output['Location'] = business.location
-            output['Category'] = business.category
+        
+        for business in businesses:
+            output = {
+                'Business Name': business.business_name,
+                'Business Profile': business.business_profile,
+                'Location': business.location,
+                'Category': business.category
+                }
             business_list.append(output)
         return jsonify({'businesses': business_list})

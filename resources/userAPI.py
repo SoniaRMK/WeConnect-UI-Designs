@@ -1,4 +1,4 @@
-from .resources import *
+from resources import *
 import smtplib
 import random
 from flask_restful.reqparse import RequestParser

@@ -1,18 +1,19 @@
-from resources.resources import *
+from resources import *
 from models.models import Review, Business
 from flask_restful.reqparse import RequestParser
 
 
 """Validating the arguments"""
 review_validation = RequestParser(bundle_errors=True)
-review_validation.add_argument("reviewMsg", type=str, required=True, help="Review Message should be a string")
+review_validation.add_argument("review_msg", type=str, required=True, help="Review Message should be a string")
 
-class Review(Resource):
+class ReviewBusiness(Resource):
     @swag_from("../APIdocs/ViewReviews.yml")
     @token_required
 
     #Add a review to a business
     def post(self, bizid):
+        user = request.data['user']
         business = Business.query.filter_by(id=bizid).first()
         if not business:
             message = {
@@ -23,9 +24,9 @@ class Review(Resource):
             resp.status_code = 404
             return resp
 
-        review = Review(review_msg = business_validation.parse_args().review_msg,
-                        business_id = bizid,
-                        user_id = request.data['user'])
+        review = Review(review_msg = review_validation.parse_args().review_msg,
+                        business_id = bizid, 
+                        user_id = user)
         db.session.add(review)
         db.session.commit()
         message = {
@@ -34,6 +35,7 @@ class Review(Resource):
                     }
         resp = jsonify(message)
         resp.status_code = 200
+        return resp
 
     """Get all reviews of a business"""
     @swag_from("../APIdocs/AddReview.yml")
