@@ -9,6 +9,8 @@ class User(db.Model):
     user_email = db.Column(db.String(60), nullable=False, unique=True)
     user_password = db.Column(db.String(300), nullable=False,)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
+    ), onupdate=db.func.current_timestamp())
     #user_name = db.Column(db.String(60))
     businesses = db.relationship('Business', backref='user',
                                  lazy='dynamic')
@@ -26,6 +28,8 @@ class Business(db.Model):
     category = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
+    ), onupdate=db.func.current_timestamp())
     reviews = db.relationship('Review', backref='business', lazy='dynamic')
     def __init__(self, business_name, business_profile, location, category, user_id):
         self.business_name = business_name#pragma:no cover
