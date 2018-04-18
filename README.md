@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=master)](https://travis-ci.org/SoniaRMK/WeConnect)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5005cc713b8de4cd9d91/maintainability)](https://codeclimate.com/github/SoniaRMK/WeConnect/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/5005cc713b8de4cd9d91/test_coverage)](https://codeclimate.com/github/SoniaRMK/WeConnect/test_coverage)
-[![Coverage Status](https://coveralls.io/repos/github/SoniaRMK/SoniaRMK.github.io/badge.svg?branch=master)](https://coveralls.io/github/SoniaRMK/SoniaRMK.github.io?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/SoniaRMK/WeConnect/badge.svg)](https://coveralls.io/github/SoniaRMK/WeConnect)
 
 # WeConnect
 This repository contains the description, a guide on how to clone and run the platform.
