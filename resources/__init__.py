@@ -38,36 +38,3 @@ app.config["SWAGGER"] = {
 app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
 swagger = Swagger(app)
 api = Api(app)
-
-def token_required(func):
-    @wraps(func)
-    def decorated(*args, **kwargs):            
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(' ')[1]
-            try: 
-                data = jwt.decode(token, app.config['SECRET_KEY'])
-                user = data['user']
-                if user:
-                    request.data = json.loads(request.data) if len(request.data) else {}
-                    request.data['user'] = user
-            except:
-                message = {
-                    'status': "Unauthorized access attempted!",
-                    'message': 'Token is invalid!!',
-                    }
-                resp = jsonify(message)
-                resp.status_code = 401
-                return resp
-        
-        else:
-            message = {
-            'status': "Unauthorized access attempted!",
-            'message': 'Token is missing!!',
-            }
-            resp = jsonify(message)
-            resp.status_code = 401
-            return resp
-
-        return func(*args, **kwargs)
-
-    return decorated
