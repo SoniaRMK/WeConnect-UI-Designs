@@ -99,7 +99,7 @@ class BusinessList(Resource):
         'createdBy': "Sonia"
         }
         business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
-        if business:
+        if not business:
             businesses.append(biz)
             message = {
             'status': "success",
