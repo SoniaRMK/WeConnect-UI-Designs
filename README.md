@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=master)](https://travis-ci.org/SoniaRMK/WeConnect)
+[![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=WeConnectAPI-v3)](https://travis-ci.org/SoniaRMK/WeConnect)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5005cc713b8de4cd9d91/maintainability)](https://codeclimate.com/github/SoniaRMK/WeConnect/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/5005cc713b8de4cd9d91/test_coverage)](https://codeclimate.com/github/SoniaRMK/WeConnect/test_coverage)
 
