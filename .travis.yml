@@ -9,6 +9,7 @@ install:
 # Setting environment variables
 env:
   - ENV_VAR=testing
+    - CC_TEST_REPORTER_ID=bb516e756802f0ea8dab9a0e2e8e7e77baf973d868154ca3e6363119b67c2672
 
 # command to run tests
 script:
