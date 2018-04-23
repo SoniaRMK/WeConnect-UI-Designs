@@ -1,7 +1,7 @@
 from resources import *
-from resources.userAPI import UserRegister, UserLogin, UserLogout
-from resources.businessAPI import BusinessList, BusinessOne
-from resources.reviewAPI import ReviewBusiness
+from resources.user_api import UserRegister, UserLogin, UserLogout
+from resources.business_api import BusinessList, BusinessOne
+from resources.review_api import ReviewBusiness
 
 
 api.add_resource(UserRegister, '/api/v2/auth/register')

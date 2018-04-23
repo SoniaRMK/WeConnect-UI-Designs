@@ -1,42 +1,78 @@
 import unittest
 import json
-import app
-
-BASE_URL = '/api/v2/businesses'
-BAD_REVIEW_URL = '{}/6/reviews'.format(BASE_URL)
-GOOD_REVIEW_URL = '{}/1/reviews'.format(BASE_URL)
+from resources import app, db
+from run import UserRegister, UserLogin
+from models.models import User
 
 
-class TestReviews(unittest.TestCase):
+class TestUser(unittest.TestCase):
 
     def setUp(self):
-        self.app = app.app.test_client()
-        self.app.testing = True
-        reviews = [
-                {
-                    "reviewMsg": "Telecommunications",
-                    "businessID": 1,
-                    "createdBy": "Sonia"
-            }
-        ]
+        self.app=app.test_client()
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_user.txt'
+        db.create_all()
+        db.session.add(User(user_email='abc@yyyy.zzz', user_password='67890'))
+        db.session.add(User(user_email='def@yyy.zzz', user_password='12345'))
+        #db.session.commit()
 
-    def test_get_all(self):
-        response = self.app.get(BASE_URL)
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_register_user_success(self):
+        """Ensures that a user is registered successfully"""
+        response = self.app.post('/api/v2/auth/register',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "soniakxxx@yyy.com", "user_password": "jh123"})
+                            )
+        self.assertEqual(response.status_code, 201)
+        self.assertIn(b'User registered!', response.data)
+
+    def test_register_user_exists(self):
+        """Ensures that a user is not registered twice"""
+        response = self.app.post('/api/v2/auth/register',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
+                            )
+        self.assertEqual(response.status_code, 409)
+        self.assertIn(b'User already exists!', response.data)
+
+    def test_register_user_fail(self):
+        """Ensures that a user is not registered with missing credential"""
+        response = self.app.post('/api/v2/auth/register',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "afgc@yyyy.zzz"})
+                            )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(b'Password must be a valid string', response.data)
+
+    def test_user_login_success(self):
+        """Ensures that a user logs on successfully"""
+        response = self.app.post('/api/v2/auth/login',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
+                            )
         self.assertEqual(response.status_code, 200)
-        #self.assertEqual(len(data['reviews']), 5)
+        self.assertIn(b'Logged in', response.data)
 
-    def test_review_not_exist(self):
-        response = self.app.get(BAD_REVIEW_URL)
-        self.assertEqual(response.status_code, 200)
+    def test_user_login_fail(self):
+        """Ensures that a user can't log on with missing credential"""
+        response = self.app.post('/api/v2/auth/login',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": ""})
+                            )
+        self.assertEqual(response.status_code, 401)
+        self.assertIn(b'Password and/or Email are missing!', response.data)
 
-    def test_post(self):
-        # check for missing values
-        review = {'reviewMsg' : 'some_review'}
-        response = self.app.post(GOOD_REVIEW_URL,
-                                 data=json.dumps(review),
-                                 content_type='application/json')
-        self.assertEqual(response.status_code, 404)
-
-
+    def test_login_wrong_credentials(self):
+        """Ensures that a user can't log on with wrong credentials"""
+        response = self.app.post('/api/v2/auth/login',
+                            content_type='application/json',
+                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67kK0"})
+                            )
+        self.assertEqual(response.status_code, 401)
+        self.assertIn(b'User does not Exist!', response.data)
+       
 if __name__ == "__main__":
     unittest.main()
