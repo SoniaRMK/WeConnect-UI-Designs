@@ -10,11 +10,8 @@ class TestUser(unittest.TestCase):
     def setUp(self):
         self.app=app.test_client()
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_user.txt'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
         db.create_all()
-        db.session.add(User(user_email='abc@yyyy.zzz', user_password='67890'))
-        db.session.add(User(user_email='def@yyy.zzz', user_password='12345'))
-        #db.session.commit()
 
     def tearDown(self):
         db.session.remove()
