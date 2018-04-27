@@ -63,6 +63,16 @@ def token_required(func):
     def decorated(*args, **kwargs):            
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(' ')[1]
+            #check if token is blacklisted
+            black_list_token = Blacklist.query.filter_by(token = token).first()
+            if black_list_token:
+                message = {
+                    'status': "Unauthorized access attempted!",
+                    'message': 'Expired token, Login again!!',
+                    }
+                resp = jsonify(message)
+                resp.status_code = 403
+                return resp
             try: 
                 data = jwt.decode(token, app.config['SECRET_KEY'])
                 user = data['user']

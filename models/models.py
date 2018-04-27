@@ -51,3 +51,14 @@ class Review(db.Model):
         self.business_id = business_id#pragma:no cover
         self.user_id = user_id#pragma:no cover
         db.create_all()#pragma:no cover
+
+class Blacklist(db.Model):
+    """Blacklisted Tokens"""
+    
+    __tablename__ = 'blacklists'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(1000), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    def __init__(self,token):
+        self.token = token
+        db.create_all()

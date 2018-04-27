@@ -2,7 +2,7 @@ from resources import *
 import smtplib
 import random
 from flask_restful.reqparse import RequestParser
-from models.models import User
+from models.models import User, Blacklist
 
 
 token = ''
@@ -91,9 +91,20 @@ class UserLogin(Resource):
         return resp
 
 class UserLogout(Resource):
+    """Class for logging out a user"""
+
     @swag_from("../APIdocs/LogoutUser.yml")
     @token_required
     def post(self):
+        """Logs out a user"""
+        
+        authorization = request.headers.get("Authorization")
+        if authorization:
+            token = authorization.split(" ")[1]
+        token_blacklist = Blacklist(token)
+        db.session.add(token_blacklist)
+        db.session.commit()
+
         message = {
             'status': "Success",
             'message': 'Logged out',
@@ -103,24 +114,27 @@ class UserLogout(Resource):
         return resp
 
 class UserResetPassword(Resource):
+    """Class for resetting user password when the user has forgotten their password"""
     @swag_from("../APIdocs/PasswordReset.yml")
     def post(self):
-        resp = jsonify({})
-        user_args = user_validation.parse_args()
-        for user in users:
-            if user['userEmail'] == user_args.userEmail:
-                user['userPassword'] = user_args.userPassword
-                message = {
-                    'status': "Success",
-                    'message': 'Password Reset'
-                 }
-                resp = jsonify(message)
-                resp.status_code = 200
-            else:
-                message = {
-                    'status': "Not Found",
-                    'message': 'User doesnot exist',
-                    }
-                resp = jsonify(message)
-                resp.status_code = 404
+        """Method to help a user reset their password"""
+        user_email = request.json['user_email']
+        user = User.query.filter_by(user_email=user_email).first()
+        if not user:
+            message = {
+                'status': "Not Found",
+                'message': 'User doesnot exist',
+                }
+            resp = jsonify(message)
+            resp.status_code = 404
+            return resp
+        user.user_password = "QwhsdE" + str(random.randrange(10000))
+        db.session.commit()
+        message = {
+            'status': "Success",
+            'message': 'Password Reset',
+            'New Password': user.user_password,
+            }
+        resp = jsonify(message)
+        resp.status_code = 200
         return resp
