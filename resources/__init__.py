@@ -8,6 +8,7 @@ from flasgger import Swagger, swag_from
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from models.models import Blacklist
 
 
 app = Flask(__name__)
@@ -40,15 +41,10 @@ app.config["SWAGGER"] = {
             ]
         }
 
-#Setting the Secret Key for the Token
-app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
-
 #Documentation with Flasgger
 swagger = Swagger(app)
 
-#PostgreSQL with SQLAlchemy Database Creation
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/WeConnect'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+"""PostgreSQL with SQLAlchemy Database Creation"""
 db = SQLAlchemy(app)
 db.init_app(app)
 manager = Manager(app)

@@ -11,6 +11,7 @@ class TestBusiness(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/testdb'
         self.business = {'businessName': 'MTN', 'Location' : 'Kampala', 'Category' : 'Telecomm', 
                          'businessProfile': 'Best Telecomm Company'}
         self.business_edit = {'businessName': 'MTN-Uganda', 'Location' : 'Kampala', 'Category' : 'Telecomm', 

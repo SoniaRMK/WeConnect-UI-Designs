@@ -9,7 +9,6 @@ token = ''
 
 #Validating the arguments
 user_validation = RequestParser(bundle_errors=True)
-#user_validation.add_argument("displayName", type=str, required=True, help="Name must be a valid string")
 user_validation.add_argument("user_email", type=str, required=True, help="Email must be a valid email")
 user_validation.add_argument("user_password", type=str, required=True, help="Password must be a valid string")
 
@@ -17,9 +16,6 @@ user_validation.add_argument("user_password", type=str, required=True, help="Pas
 class UserRegister(Resource):
     @swag_from("../APIdocs/CreateUser.yml")
     def post(self): 
-       # user_args = user_validation.parse_args()
-        #user_email = user_validation.parse_args().user_email
-        #user_password = user_validation.parse_args().user_password
         user = User(user_email=user_validation.parse_args().user_email, user_password=user_validation.parse_args().user_password)
 
         """ if not user_email or not user_password:
@@ -64,7 +60,7 @@ class UserLogin(Resource):
                 'message': 'Password and/or Email are missing!',
                 }
             resp = jsonify(message)
-            resp.status_code = 401
+            resp.status_code = 400
             return resp
         
         user = User.query.filter_by(user_email = useremail).first()
@@ -74,7 +70,7 @@ class UserLogin(Resource):
                 'message': 'User does not Exist!',
                 }
             resp = jsonify(message)
-            resp.status_code = 401
+            resp.status_code = 400
             return resp
         if user.user_password == userpassword:
             token = jwt.encode({
