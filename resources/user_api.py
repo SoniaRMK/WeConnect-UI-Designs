@@ -1,14 +1,14 @@
-from resources.lib import *
+import sys
+sys.path.append('..')
+from resources import *
 import smtplib
 import random
 from flask_restful.reqparse import RequestParser
 
 users = []
-invalidTokens = []
-
+token = ''
 #Validating the arguments
 user_validation = RequestParser(bundle_errors=True)
-user_validation.add_argument("displayName", type=str, required=True, help="Name must be a valid string")
 user_validation.add_argument("userEmail", type=str, required=True, help="Email must be a valid email")
 user_validation.add_argument("userPassword", type=str, required=True, help="Password must be a valid string")
 
@@ -18,8 +18,7 @@ class UserRegister(Resource):
     def post(self): 
         user_args = user_validation.parse_args()     
         user = {
-            'userID' : len(users) + 1,
-            'displayName' : user_args.displayName, 
+            'userID' : len(users) + 1, 
             'userEmail' : user_args.userEmail,            
             'userPassword' : user_args.userPassword
             }
@@ -31,7 +30,7 @@ class UserRegister(Resource):
             'message': 'User Successfully Created!!',
             }
             resp = jsonify(message)
-            resp.status_code = 200
+            resp.status_code = 201
       
         else:
             message = {
@@ -39,7 +38,7 @@ class UserRegister(Resource):
             'message': 'Email Already registered!',
             }
             resp = jsonify(message)
-            resp.status_code = 400
+            resp.status_code = 409
 
         return resp 
         
@@ -47,17 +46,16 @@ class UserLogin(Resource):
     @swag_from("../APIdocs/LoginUser.yml")
     def post(self):
         user_args = user_validation.parse_args()
-        token = ''
         for u in users:
             if u['userEmail'] == user_args.userEmail and u['userPassword'] == user_args.userPassword:
-                token = jwt.encode({'user' : u['displayName'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+                token = jwt.encode({'user' : u['userEmail'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
             else:
                 message = {
                 'status': "Bad Request",
                 'message': 'User cannot be verified!',
                 }
                 resp = jsonify(message)
-                resp.status_code = 400
+                resp.status_code = 401
                 return resp
         message = {
             'status': "Success",
@@ -70,9 +68,7 @@ class UserLogin(Resource):
 
 class UserLogout(Resource):
     @swag_from("../APIdocs/LogoutUser.yml")
-    @token_required
     def post(self):
-        invalidTokens.append(request.headers['Authorization'].split(' ')[1])
         return make_response('Successfully Logged out!', 200)
 
 class UserResetPassword(Resource):

@@ -1,4 +1,6 @@
-from resources.lib import *
+import sys
+sys.path.append('..')
+from resources import *
 from flask_restful.reqparse import RequestParser
 
 businesses = []
@@ -14,7 +16,6 @@ business_validation.add_argument("businessProfile", type=str, required=True, hel
 class Business(Resource):
     #gets a  business
     @swag_from("../APIdocs/ViewBusiness.yml")
-    @token_required
     def get(self, bizid):
         biz = [business for business in businesses if business['businessID'] == bizid]
         if biz == []:
@@ -36,7 +37,6 @@ class Business(Resource):
 
     #deletes a business
     @swag_from("../APIdocs/DeleteBusiness.yml")
-    @token_required
     def delete(self, bizid):
         biz = [business for business in businesses if business['businessID']==bizid]
         if biz == []:
@@ -59,37 +59,35 @@ class Business(Resource):
         
     #edits a  business
     @swag_from("../APIdocs/UpdateBusiness.yml")
-    @token_required
     def put(self, bizid):
         business_args = business_validation.parse_args() 
         biz = [business for business in businesses if business['businessID'] == bizid]
         business = [busi for busi in businesses if business_args.businessName == busi['businessName'] and business_args.Category == busi['Category']]
-        if len(business) == 0:
+        if biz:
             biz[0]['businessName'] = business_args.businessName
             biz[0]['businessProfile'] = business_args.businessProfile
             biz[0]['Category'] = business_args.Category
             biz[0]['Location'] = business_args.Location
             message = {
-                    'status': "Failed",
-                    'message': 'Business Already Exists!',
+                    'status': "Success",
+                    'message': 'Business successfully Edited!',
                     }
             resp = jsonify(message)
-            resp.status_code = 400
+            resp.status_code = 200
         else:
 
             message = {
-            'status': "Success",
-            'message': 'Business successfully Edited!',
-            }
+                    'status': "Failed",
+                    'message': 'Business not Found!',
+                    }
             resp = jsonify(message)
-            resp.status_code = 200
+            resp.status_code = 404
 
         return resp
 
 class BusinessList(Resource):
     #creates a new business
     @swag_from("../APIdocs/CreateBusiness.yml")
-    @token_required
     def post(self):
         business_args = business_validation.parse_args() 
         biz = {
@@ -98,18 +96,17 @@ class BusinessList(Resource):
         'Location' : business_args.Location, 
         'Category' : business_args.Category, 
         'businessProfile': business_args.businessProfile, 
-        'createdBy': request.data['user'],
-        #'createdOn' : datetime.date
+        'createdBy': "Sonia"
         }
         business = [busi for busi in businesses if request.json['businessName'] == busi['businessName'] and request.json['Category'] == busi['Category']]
-        if len(business) == 0:
+        if not business:
             businesses.append(biz)
             message = {
             'status': "success",
-            'message': 'Business Successfully Created!!',
+            'message': 'Business was Successfully Created!!',
             }
             resp = jsonify(message)
-            resp.status_code = 200
+            resp.status_code = 201
       
         else:
             message = {
@@ -123,6 +120,5 @@ class BusinessList(Resource):
     
     #Get all businesses
     @swag_from("../APIdocs/ViewBusinesses.yml")
-    @token_required
     def get(self):
         return jsonify({'businesses': businesses})

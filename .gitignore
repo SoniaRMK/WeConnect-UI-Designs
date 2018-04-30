@@ -1,0 +1,9 @@
+Env
+.coverage
+__pycache__
+.vscode
+pylintrc
+htmlcov
+.pytest_cache/
+migrations/
+resources/__init__.pyc

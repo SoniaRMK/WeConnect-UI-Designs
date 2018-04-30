@@ -1,5 +1,7 @@
-from resources.lib import *
-from resources.businessAPI import businesses
+import sys
+sys.path.append('..')
+from resources import *
+from resources.business_api import businesses
 from flask_restful.reqparse import RequestParser
 
 
@@ -11,7 +13,6 @@ review_validation.add_argument("reviewMsg", type=str, required=True, help="Revie
 
 class Review(Resource):
     @swag_from("../APIdocs/ViewReviews.yml")
-    @token_required
     #Add a review to a business
     def post(self, bizid):
         review_args = review_validation.parse_args()  
@@ -20,7 +21,7 @@ class Review(Resource):
         review = {
                 'reviewMsg': review_args.reviewMsg, 
                 'businessID': bizid,                    
-                'createdBy': request.data['user'],
+                'createdBy': 'Sonia',
                 }
         if business != []:
             reviews.append(review)
@@ -41,7 +42,6 @@ class Review(Resource):
         return resp
     #Get all reviews of a business
     @swag_from("../APIdocs/AddReview.yml")
-    @token_required
     def get(self, bizid):
         business = [busi for busi in businesses if busi['businessID'] == bizid]
         reviewsbiz = [rev for rev in reviews if rev['businessID'] == bizid]
