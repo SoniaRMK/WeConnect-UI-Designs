@@ -8,7 +8,6 @@ from flasgger import Swagger, swag_from
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models.models import Blacklist
 
 
 app = Flask(__name__)
@@ -41,10 +40,15 @@ app.config["SWAGGER"] = {
             ]
         }
 
+#Setting the Secret Key for the Token
+app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
+
 #Documentation with Flasgger
 swagger = Swagger(app)
 
-"""PostgreSQL with SQLAlchemy Database Creation"""
+#PostgreSQL with SQLAlchemy Database Creation
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/WeConnect'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
 manager = Manager(app)
@@ -56,8 +60,12 @@ api = Api(app)
 #Function to check for Token required
 def token_required(func):
     @wraps(func)
-    def decorated(*args, **kwargs):            
+    def decorated(*args, **kwargs):    
+        from models.models import Blacklist        
         if 'Authorization' in request.headers:
+            # import ipdb
+            # ipdb.set_trace()
+
             token = request.headers['Authorization'].split(' ')[1]
             #check if token is blacklisted
             black_list_token = Blacklist.query.filter_by(token = token).first()
@@ -75,7 +83,7 @@ def token_required(func):
                 if user:
                     request.data = json.loads(request.data) if len(request.data) else {}
                     request.data['user'] = user
-            except:
+            except jwt.InvalidTokenError:
                 message = {
                     'status': "Unauthorized access attempted!",
                     'message': 'Token is invalid!!',
@@ -87,10 +95,10 @@ def token_required(func):
         else:
             message = {
             'status': "Unauthorized access attempted!",
-            'message': 'Token is missing!!',
+            'message': 'Token is missing, Please Login!!',
             }
             resp = jsonify(message)
-            resp.status_code = 401
+            resp.status_code = 404
             return resp
 
         return func(*args, **kwargs)
