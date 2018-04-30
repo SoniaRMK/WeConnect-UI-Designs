@@ -11,7 +11,6 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         app.config.from_object('config.TestingConfig')
-        # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:brian@localhost/dbtests'
         return app
 
     def setUp(self):
