@@ -1,78 +1,89 @@
 import unittest
 import json
-from resources import app, db
+from resources import app, api, db
 from run import UserRegister, UserLogin
-from models.models import User
 
 
 class TestUser(unittest.TestCase):
+    """Tests for the user api i.e. user registration, login, logout and password resetting"""
 
+    def create_app(self):
+        """Creates the app for testing"""
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
+        return app
     def setUp(self):
-        self.app=app.test_client()
-        app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/testdb'
+        self.app = app.test_client()
+        self.app.testing = True
+        db.drop_all()
         db.create_all()
-        db.session.add(User(user_email='abc@yyyy.zzz', user_password='67890'))
-        db.session.add(User(user_email='def@yyy.zzz', user_password='12345'))
-        #db.session.commit()
+        self.user = {'user_email' : 'soniak@gmail.com', 'user_password' : 'qWerty123'}
 
     def tearDown(self):
-        db.session.remove()
         db.drop_all()
 
     def test_register_user_success(self):
         """Ensures that a user is registered successfully"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "soniakxxx@yyy.com", "user_password": "jh123"})
-                            )
+        response = self.app.post('/api/v2/auth/register', content_type='application/json',
+                            data=json.dumps({'user_email': 'aklod@gmail.com', 'user_password': 'qouyWerty123'}))
         self.assertEqual(response.status_code, 201)
-        self.assertIn(b'User registered!', response.data)
 
     def test_register_user_exists(self):
         """Ensures that a user is not registered twice"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
-                            )
+        response = self.app.post('/api/v2/auth/register', content_type='application/json',
+                            data=json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/register', content_type='application/json',
+                            data=json.dumps(self.user))
         self.assertEqual(response.status_code, 409)
-        self.assertIn(b'User already exists!', response.data)
 
     def test_register_user_fail(self):
         """Ensures that a user is not registered with missing credential"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "afgc@yyyy.zzz"})
-                            )
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', 
+                        data=json.dumps({"user_email": "afgc@yyyy.zzz"}))
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'Password must be a valid string', response.data)
 
     def test_user_login_success(self):
         """Ensures that a user logs on successfully"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
-                            )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Logged in', response.data)
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
+        self.assertEqual(login.status_code, 200)
 
     def test_user_login_fail(self):
-        """Ensures that a user can't log on with missing credential"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": ""})
-                            )
+        """Ensures that a user can't log on when not registered"""
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/login', content_type='application/json', 
+                        data=json.dumps({"user_email": "soniak1234@gmail.com", "user_password": ""}))
         self.assertEqual(response.status_code, 401)
-        self.assertIn(b'Password and/or Email are missing!', response.data)
 
     def test_login_wrong_credentials(self):
         """Ensures that a user can't log on with wrong credentials"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67kK0"})
-                            )
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/login', content_type='application/json', 
+                        data=json.dumps({"user_email": "soniakxx@gmail.com", "user_password": "67kK0"}))
         self.assertEqual(response.status_code, 401)
-        self.assertIn(b'User does not Exist!', response.data)
-       
+
+    def tests_user_logout(self):
+        """ test a user logs out successfully """
+        register = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
+        login_data = json.loads(login.data.decode())
+        access_token = login_data["token"]
+        logout = self.app.post('/api/v2/auth/logout', headers={'Authorization': 'Bearer ' + access_token}, 
+                        content_type='application/json')
+        self.assertEqual(logout.status_code, 200)
+
+    def test_user_reset_password(self):
+        """ tests a registered user can reset their password """
+        response = self.app.post('/api/v2/auth/register', content_type = 'application/json', data = json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
+                    data = json.dumps({'user_email': 'soniak@gmail.com', 'user_password': 'qouyWerty123', 'confirm_password': 'qouyWerty123'}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_reset_password_fail(self):
+        """ tests a non-registered user cannot reset their password """
+        response = self.app.post('/api/v2/auth/register', content_type = 'application/json',
+                        data = json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
+                                data = json.dumps({'user_email': 'karungi@gmail.com', 'user_password': 'qWerty123', 'confirm_password': 'qWerty123'}))
+        self.assertEqual(response.status_code, 404)
 if __name__ == "__main__":
     unittest.main()

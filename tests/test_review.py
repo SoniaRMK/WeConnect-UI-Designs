@@ -10,7 +10,7 @@ class TestUser(unittest.TestCase):
     def setUp(self):
         self.app=app.test_client()
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/testdb'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
         db.create_all()
 
     def tearDown(self):

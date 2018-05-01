@@ -47,7 +47,7 @@ app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
 swagger = Swagger(app)
 
 #PostgreSQL with SQLAlchemy Database Creation
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Joycemum97@localhost/WeConnect'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/weconnect'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)

@@ -3,3 +3,5 @@ Env
 __pycache__
 .vscode
 pylintrc
+migrations
+.pytest_cache
