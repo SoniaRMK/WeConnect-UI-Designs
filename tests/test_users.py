@@ -85,5 +85,6 @@ class TestUser(unittest.TestCase):
         response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
                                 data = json.dumps({'user_email': 'karungi@gmail.com', 'user_password': 'qWerty123', 'confirm_password': 'qWerty123'}))
         self.assertEqual(response.status_code, 404)
+        
 if __name__ == "__main__":
     unittest.main()
