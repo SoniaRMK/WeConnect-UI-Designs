@@ -1,75 +1,74 @@
 import unittest
 import json
 from resources import app, db
-from run import UserRegister, UserLogin
+from run import ReviewBusiness, BusinessList, BusinessOne, UserRegister, UserLogin
 from models.models import User
 
 
 class TestUser(unittest.TestCase):
 
-    def setUp(self):
-        self.app=app.test_client()
-        app.config['TESTING'] = True
+    def create_app(self):
+        """Creates the app for testing"""
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
+        return app
+
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+        db.session.remove()
+        db.drop_all()
         db.create_all()
+        self.user = {'user_email' : 'soniak@gmail.com', 'user_password' : 'qWerty123'}
+        self.business = {'business_name': 'MTN', 'location' : 'Kampala', 'category' : 'Telecomm', 
+                         'business_profile': 'Best Telecomm Company'}
+        self.review = {"review_msg": "Telecommunications"}
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
 
-    def test_register_user_success(self):
-        """Ensures that a user is registered successfully"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "soniakxxx@yyy.com", "user_password": "jh123"})
-                            )
-        self.assertEqual(response.status_code, 201)
-        self.assertIn(b'User registered!', response.data)
+    def get_token(self):
+        """ Generate token """
+        register = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
+        login_data = json.loads(login.data.decode())
+        self.access_token = login_data["token"]
+        return self.access_token
 
-    def test_register_user_exists(self):
-        """Ensures that a user is not registered twice"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
-                            )
-        self.assertEqual(response.status_code, 409)
-        self.assertIn(b'User already exists!', response.data)
-
-    def test_register_user_fail(self):
-        """Ensures that a user is not registered with missing credential"""
-        response = self.app.post('/api/v2/auth/register',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "afgc@yyyy.zzz"})
-                            )
-        self.assertEqual(response.status_code, 400)
-        self.assertIn(b'Password must be a valid string', response.data)
-
-    def test_user_login_success(self):
-        """Ensures that a user logs on successfully"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67890"})
-                            )
+    def test_get_all_reviews_success(self):
+        """Tests getting all reviews for a registered business"""
+        response = self.app.post('/api/v1/businesses', content_type = 'application/json', 
+                            data = json.dumps(self.business))
+        response = self.app.post('/api/v1/businesses/1/reviews', content_type = 'application/json', 
+                            data = json.dumps(self.review))
+        response = self.app.get('/api/v1/businesses/1/reviews', content_type = 'application/json')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Logged in', response.data)
 
-    def test_user_login_fail(self):
-        """Ensures that a user can't log on with missing credential"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": ""})
-                            )
-        self.assertEqual(response.status_code, 401)
-        self.assertIn(b'Password and/or Email are missing!', response.data)
+    def test_get_all_reviews_not_exist(self):
+        """Checks whether a business has reviews before retrieval"""
+        response = self.app.post('/api/v1/businesses', content_type = 'application/json', 
+                            data = json.dumps(self.business))
+        response = self.app.get('/api/v1/businesses/1/reviews', content_type = 'application/json')
+        self.assertEqual(response.status_code, 404)
 
-    def test_login_wrong_credentials(self):
-        """Ensures that a user can't log on with wrong credentials"""
-        response = self.app.post('/api/v2/auth/login',
-                            content_type='application/json',
-                            data=json.dumps({"user_email": "abc@yyyy.zzz", "user_password": "67kK0"})
-                            )
-        self.assertEqual(response.status_code, 401)
-        self.assertIn(b'User does not Exist!', response.data)
+    def test_get_all_reviews_busines_not_exist(self):
+        """Checks whether a business exists before retrieving reviews"""
+        response = self.app.get('/api/v1/businesses/1/reviews', content_type = 'application/json')
+        self.assertEqual(response.status_code, 404)
+
+    def test_add_review_success(self):
+        """Tests adding a review to a registered business"""
+        response = self.app.post('/api/v1/businesses', content_type = 'application/json', 
+                            data = json.dumps(self.business))
+        response = self.app.post('/api/v1/businesses/1/reviews', content_type = 'application/json', 
+                            data = json.dumps(self.review))
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_review_fail(self):
+        """Tests adding a review to a business not yet registered"""
+        response = self.app.post('/api/v1/businesses/1/reviews', content_type = 'application/json', 
+                            data = json.dumps(self.review))
+        self.assertEqual(response.status_code, 404)
        
 if __name__ == "__main__":
     unittest.main()

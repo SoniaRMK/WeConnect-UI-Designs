@@ -10,7 +10,6 @@ review_validation.add_argument("review_msg", type=str, required=True, help="Revi
 class ReviewBusiness(Resource):
     @swag_from("../APIdocs/ViewReviews.yml")
     @token_required
-
     #Add a review to a business
     def post(self, bizid):
         user = request.data['user']

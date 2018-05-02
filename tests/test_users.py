@@ -11,14 +11,17 @@ class TestUser(unittest.TestCase):
         """Creates the app for testing"""
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
         return app
+    
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
+        db.session.remove()
         db.drop_all()
         db.create_all()
         self.user = {'user_email' : 'soniak@gmail.com', 'user_password' : 'qWerty123'}
 
     def tearDown(self):
+        db.session.remove()
         db.drop_all()
 
     def test_register_user_success(self):

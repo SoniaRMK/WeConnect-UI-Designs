@@ -5,3 +5,4 @@ __pycache__
 pylintrc
 migrations
 .pytest_cache
+*.pyc

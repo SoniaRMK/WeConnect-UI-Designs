@@ -40,13 +40,6 @@ class BusinessOne(Resource):
     def delete(self, bizid):
         userid = request.data['user']
         business = Business.query.filter_by(id=bizid).first()
-        if business.user_id != userid:
-            message = {
-            'status': "Unathorized",
-            'message': "You cannot delete a business you didn't register!!",
-            }
-            resp = jsonify(message)
-            resp.status_code = 401
         if not business:
             message = {
                 'status': "Not Found",
@@ -55,6 +48,13 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
+        if business.user_id != userid:
+            message = {
+            'status': "Unathorized",
+            'message': "You cannot delete a business you didn't register!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 401
 
         db.session.delete(business)
         db.session.commit()
@@ -73,13 +73,6 @@ class BusinessOne(Resource):
     def put(self, bizid):
         userid = request.data['user']
         business = Business.query.filter_by(id=bizid).first()
-        if business.user_id != userid:
-            message = {
-            'status': "Unathorized",
-            'message': "You cannot Edit a business you didn't register!!",
-            }
-            resp = jsonify(message)
-            resp.status_code = 401
         if not business:
             message = {
                 'status': "Not Found",
@@ -88,6 +81,13 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
+        if business.user_id != userid:
+            message = {
+            'status': "Unathorized",
+            'message': "You cannot Edit a business you didn't register!!",
+            }
+            resp = jsonify(message)
+            resp.status_code = 401
 
         business.business_name=business_validation.parse_args().business_name
         business_profile=business_validation.parse_args().business_profile
@@ -117,7 +117,6 @@ class BusinessList(Resource):
             user_id=user)
 
         try:
-            #user = models.User(user_email, user_password)
             db.session.add(business)
             db.session.commit()
             message = {
