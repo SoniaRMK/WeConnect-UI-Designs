@@ -19,7 +19,7 @@ class TestBusiness(unittest.TestCase):
         db.drop_all()
         db.create_all()
         self.user = {'user_email' : 'soniak@gmail.com', 'user_password' : 'qWerty123'}
-        self.business = {'business_name': 'MTN', 'location' : 'Kampala', 'category' : 'Telecomm', 
+        self.business = {'business_name': 'MTN Kla', 'location' : 'Kampala', 'category' : 'Telecomm', 
                          'business_profile': 'Best Telecomm Company'}
         self.business_edit = {'business_name': 'MTN-Uganda', 'location' : 'Kampala', 'category' : 'Telecommunications', 
                          'business_profile': 'Best Telecomm Company'}

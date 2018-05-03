@@ -39,8 +39,8 @@ class BusinessOne(Resource):
     @token_required
     def delete(self, bizid):
         userid = request.data['user']
-        business = Business.query.filter_by(id=bizid).first()
-        if not business:
+        isbusiness = Business.query.filter_by(id=bizid).first()
+        if not isbusiness:
             message = {
                 'status': "Not Found",
                 'message': 'Business not registered yet!',
@@ -48,24 +48,26 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-        if business.user_id != userid:
+        if isbusiness.user_id != userid:
             message = {
             'status': "Unathorized",
             'message': "You cannot delete a business you didn't register!!",
             }
             resp = jsonify(message)
             resp.status_code = 401
+            return resp
+        else:
+            isbusiness.is_deleted = True
+            #db.session.delete(isbusiness)
+            db.session.commit()
 
-        db.session.delete(business)
-        db.session.commit()
-
-        message = {
-            'status': "Success",
-            'message': 'Business successfully Deleted!',
-            }
-        resp = jsonify(message)
-        resp.status_code = 200
-        return resp
+            message = {
+                'status': "Success",
+                'message': 'Business successfully Deleted!',
+                }
+            resp = jsonify(message)
+            resp.status_code = 200
+            return resp
         
     #edits a  business
     @swag_from("../APIdocs/UpdateBusiness.yml")
