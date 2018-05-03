@@ -9,7 +9,7 @@ class TestUser(unittest.TestCase):
 
     def create_app(self):
         """Creates the app for testing"""
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost/testdb'
         return app
 
     def setUp(self):
