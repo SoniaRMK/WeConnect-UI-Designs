@@ -4,11 +4,20 @@ python:
 
 # command to install dependencies
 install:
+  - pip install coverage
+  - pip install coveralls
+  - pip install nose-cov
   - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c "CREATE DATABASE testdb;" -U postgres
 
 # Setting environment variables
 env:
-  - ENV_VAR=testing
+  - DATABASE_URL=postgresql://@localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
 
 # command to run tests
 script:
