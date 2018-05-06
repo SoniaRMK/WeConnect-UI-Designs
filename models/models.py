@@ -1,4 +1,5 @@
 from resources import app, SQLAlchemy
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy(app)
 db.init_app(app)
@@ -15,9 +16,9 @@ class User(db.Model):
     businesses = db.relationship('Business', backref='user',
                                  lazy='dynamic')
     def __init__(self, user_email, user_password):
-        self.user_email = user_email#pragma:no cover
-        self.user_password = user_password#pragma:no cover
-        db.create_all()   #pragma:no cover
+        self.user_email = user_email
+        self.user_password = generate_password_hash(user_password, method='sha256')
+        db.create_all()
     
 class Business(db.Model):
     __tablename__ = 'businesses'

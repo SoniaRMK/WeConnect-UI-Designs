@@ -9,7 +9,7 @@ class TestBusiness(unittest.TestCase):
 
     def create_app(self):
         """Creates the app for testing"""
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost/testdb'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
         return app
 
     def setUp(self):
@@ -34,6 +34,7 @@ class TestBusiness(unittest.TestCase):
         login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
         login_data = json.loads(login.data.decode())
         self.access_token = login_data["token"]
+        print(login_data)
         return self.access_token
 
     def test_create_business_without_authentication(self):
@@ -45,7 +46,9 @@ class TestBusiness(unittest.TestCase):
     def test_create_business(self):
         """Tests whether a user can create a business"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
+                            data = json.dumps({'business_name': 'MTN Kampala-Uganda', 'location' : 'Kampala', 'category' : 'Telecomm', 
+                         'business_profile': 'Best Telecomm Company'}))
         self.assertEqual(response.status_code, 201)
 
     def test_create_business_already_exist(self):
