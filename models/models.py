@@ -5,6 +5,8 @@ db = SQLAlchemy(app)
 db.init_app(app)
 
 class User(db.Model):
+    """Model to create a user"""
+    
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_email = db.Column(db.String(60), nullable=False, unique=True)
@@ -21,6 +23,8 @@ class User(db.Model):
         db.create_all()
     
 class Business(db.Model):
+    """Model to create a business"""
+
     __tablename__ = 'businesses'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     business_name = db.Column(db.String(60), nullable=False, unique=True)
@@ -41,6 +45,8 @@ class Business(db.Model):
         db.create_all()#pragma:no cover
 
 class Review(db.Model):
+    """Model to create a review"""
+
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     review_msg = db.Column(db.String(1000), nullable=False)

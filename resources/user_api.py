@@ -46,6 +46,7 @@ class UserLogin(Resource):
     @swag_from("../APIdocs/LoginUser.yml")
     def post(self):
         """"User login with email and password"""
+
         user_email = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]{,100}$', request.json['user_email'])
         userpassword = user_validation.parse_args().user_password
         if user_email and userpassword:
@@ -59,7 +60,7 @@ class UserLogin(Resource):
                 if check_password_hash(user.user_password, request.json['user_password']):
                     token = jwt.encode({'user' : user.id, 
                                         'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
-                                    app.config['SECRET_KEY'])
+                                        app.config['SECRET_KEY'])
                     message = {'status': "Success", 'message': 'Logged in', 'token' : token.decode('UTF-8')}
                     resp = jsonify(message)
                     resp.status_code = 200
@@ -76,6 +77,7 @@ class UserLogout(Resource):
     @token_required
     def post(self):
         """Logs out a user"""
+
         authorization = request.headers.get("Authorization")
         if authorization:
             token = authorization.split(" ")[1]
@@ -102,10 +104,7 @@ class UserResetPassword(Resource):
             if user is not None:  
                 user.user_password = generate_password_hash(request.json['user_password'], method='sha256')
                 db.session.commit()
-                message = {
-                    'status': "Success",
-                    'message': 'Password Reset',
-                    }
+                message = {'status': "Success", 'message': 'Password Reset'}
                 resp = jsonify(message)
                 resp.status_code = 200           
                 return resp

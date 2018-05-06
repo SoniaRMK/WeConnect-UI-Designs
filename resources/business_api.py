@@ -25,12 +25,10 @@ class BusinessOne(Resource):
     @token_required
     def get(self, bizid):
         """gets a  business"""
+
         business = Business.query.get(bizid)
         if not business:
-            message = {
-                'status': "Not Found",
-                'message': 'Business not registered yet!',
-                }
+            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
@@ -43,58 +41,45 @@ class BusinessOne(Resource):
         
         return jsonify({'business': output})
 
-    #deletes a business
     @swag_from("../APIdocs/DeleteBusiness.yml")
     @token_required
     def delete(self, bizid):
+        """deletes a business"""
+
         userid = request.data['user']
         business = Business.query.get(bizid)
         if business is None:
-            message = {
-                'status': "Not Found",
-                'message': 'Business not registered yet!',
-                }
+            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
         if business.user_id != userid:
-            message = {
-            'status': "Unathorized",
-            'message': "You cannot delete a business you didn't register!!",
-            }
+            message = {'status': "Unathorized", 'message': "You cannot delete a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
         else:
             db.session.delete(business)
             #db.session.commit()
-            message = {
-                'status': "Success",
-                'message': 'Business successfully Deleted!',
-                }
+            message = {'status': "Success", 'message': 'Business successfully Deleted!'}
             resp = jsonify(message)
             resp.status_code = 200
             return resp
         
-    #edits a  business
     @swag_from("../APIdocs/UpdateBusiness.yml")
     @token_required
     def put(self, bizid):
+        """edits a  business"""
+
         userid = request.data['user']
         business = Business.query.filter_by(id=bizid).first()
         if not business:
-            message = {
-                'status': "Not Found",
-                'message': 'Business not registered yet!',
-                }
+            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
         if business.user_id != userid:
-            message = {
-            'status': "Unathorized",
-            'message': "You cannot Edit a business you didn't register!!",
-            }
+            message = {'status': "Unathorized", 'message': "You cannot Edit a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
 
@@ -103,10 +88,7 @@ class BusinessOne(Resource):
         business.location=business_validation.parse_args().location
         business.category=business_validation.parse_args().category
         db.session.commit()
-        message = {
-            'status': "Success",
-            'message': 'Business successfully Updated!',
-            }
+        message = {'status': "Success", 'message': 'Business successfully Updated!'}
         resp = jsonify(message)
         resp.status_code = 200
         return resp
@@ -130,17 +112,11 @@ class BusinessList(Resource):
         try:
             db.session.add(business)
             db.session.commit()
-            message = {
-                'status': "Success",
-                'message': 'Business registered!',
-                }
+            message = {'status': "Success", 'message': 'Business registered!'}
             resp = jsonify(message)
             resp.status_code = 201
         except:
-            message = {
-                'status': "Conflict",
-                'message': 'Business already Exists!',
-                }
+            message = {'status': "Conflict", 'message': 'Business already Exists!'}
             resp = jsonify(message)
             resp.status_code = 409 
         
@@ -150,6 +126,7 @@ class BusinessList(Resource):
     @swag_from("../APIdocs/ViewBusinesses.yml")
     def get(self):
         """Get all businesses registered"""
+
         args = q_request_parser.parse_args()
         q = args.get('q', None)
         limit = args.get('limit', 10)
@@ -176,10 +153,7 @@ class BusinessList(Resource):
         business_list=[business.business_as_dict()
                            for business in businesses]
         if businesses is None:
-            message = {
-                'status': "Not Found",
-                'message': 'No businesses found!',
-                }
+            message = {'status': "Not Found", 'message': 'No businesses found!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
@@ -196,7 +170,8 @@ class BusinessList(Resource):
         next_page = businesses_result.next_num if businesses_result.has_next else None
         prev_page = businesses_result.prev_num if businesses_result.has_prev else None
         
-        business_returned = {'businesses': business_list, "next_page": next_page, "prev_page": prev_page}
-        resp = jsonify(business_returned)
+        businesses_returned = {'businesses': business_list, "next_page": next_page, "prev_page": prev_page}
+        resp = jsonify(businesses_returned)
         resp.status_code = 200
         return resp
+        

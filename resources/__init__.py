@@ -47,7 +47,7 @@ app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
 swagger = Swagger(app)
 
 #PostgreSQL with SQLAlchemy Database Creation
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/wc-db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/weconnect'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
@@ -57,8 +57,8 @@ migrate = Migrate(app, db)
 #API
 api = Api(app)
 
-#Function to check for Token required
 def token_required(func):
+    """Function to check for Token required"""
     @wraps(func)
     def decorated(*args, **kwargs):    
         from models.models import Blacklist        
@@ -104,3 +104,4 @@ def token_required(func):
         return func(*args, **kwargs)
 
     return decorated
+    

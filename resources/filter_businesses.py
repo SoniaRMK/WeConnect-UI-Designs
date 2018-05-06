@@ -6,10 +6,10 @@ from models.models import Business
 q_request_parser = RequestParser(bundle_errors=True)
 q_request_parser.add_argument("q", type=str, required=False, help="Search business by name")
 
-def search_by_name(q):
+def search_by_name(self, q):
     """search for businesses based on a search parameter q"""
     business_search_result = Business.query.order_by(
-        Business.business_name).filter(Business.business_name.like('%' + q + '%'))
+        Business.business_name).filter(Business.business_name.ilike('%' + q + '%'))
     business_list=[]
 
     if not business_search_result:
