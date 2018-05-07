@@ -1,6 +1,6 @@
 import unittest
 import json
-from resources import app, api, db
+from resources import app, db
 from run import UserRegister, UserLogin
 
 
@@ -9,7 +9,7 @@ class TestUser(unittest.TestCase):
 
     def create_app(self):
         """Creates the app for testing"""
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/testdb'
+        app.config.from_object('config.TestingConfig')
         return app
     
     def setUp(self):
@@ -54,7 +54,7 @@ class TestUser(unittest.TestCase):
         """Ensures that a user can't log on when not registered"""
         response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
         response = self.app.post('/api/v2/auth/login', content_type='application/json', 
-                        data=json.dumps({"user_email": "soniak1234@gmail.com", "user_password": ""}))
+                        data=json.dumps({"user_email": "sonifdggak1234@gmail.com", "user_password": "fdfghh"}))
         self.assertEqual(response.status_code, 401)
 
     def test_login_wrong_credentials(self):

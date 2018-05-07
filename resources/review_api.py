@@ -12,31 +12,35 @@ class ReviewBusiness(Resource):
     @swag_from("../APIdocs/ViewReviews.yml")
     @token_required
     def post(self, bizid):
-        """Add a review to a business"""
+        """Add a review to a business""" 
 
         user = request.data['user']
-        business = Business.query.filter_by(id=bizid).first()
+        business = Business.query.get(bizid)
         if not business:
             message = {'status': "Not Found", 'message': "Business you're trying to review is not registered yet!"}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-
-        review = Review(review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user)
-        db.session.add(review)
-        db.session.commit()
-        message = {'status': "review successfully added!", 'message': "Review added successfully!!"}
-        resp = jsonify(message)
-        resp.status_code = 200
-        return resp
+        if business.user_id == user:
+            message = {'status': "Unathorized", 'message': "You cannot review a business you registered!!"}
+            resp = jsonify(message)
+            resp.status_code = 401
+            return resp
+        else:
+            review = Review(review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user)
+            db.session.add(review)
+            db.session.commit()
+            message = {'status': "review successfully added!", 'message': "Review added successfully!!"}
+            resp = jsonify(message)
+            resp.status_code = 200
+            return resp
 
     """Get all reviews of a business"""
     @swag_from("../APIdocs/AddReview.yml")
-    @token_required
     def get(self, bizid):
         """Gets all reviews added to a specified business"""
 
-        business = Business.query.filter_by(id=bizid).first()
+        business = Business.query.get(bizid)
         if not business:
             message = {'status': "Not Found", 'message': "Business doesn't exist!!"}
             resp = jsonify(message)

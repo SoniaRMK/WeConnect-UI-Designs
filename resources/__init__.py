@@ -11,6 +11,9 @@ from flask_migrate import Migrate
 
 
 app = Flask(__name__)
+
+app.config.from_object('config.DevelopmentConfig')
+
 #Swagger Config for Documentation
 app.config["SWAGGER"] = {
             'swagger': '2.0',
@@ -40,15 +43,9 @@ app.config["SWAGGER"] = {
             ]
         }
 
-#Setting the Secret Key for the Token
-app.config['SECRET_KEY'] = 'Oxa34KLncvfjKEjXkf'
-
 #Documentation with Flasgger
 swagger = Swagger(app)
 
-#PostgreSQL with SQLAlchemy Database Creation
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567890@localhost/weconnect'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
 manager = Manager(app)
@@ -63,9 +60,6 @@ def token_required(func):
     def decorated(*args, **kwargs):    
         from models.models import Blacklist        
         if 'Authorization' in request.headers:
-            # import ipdb
-            # ipdb.set_trace()
-
             token = request.headers['Authorization'].split(' ')[1]
             #check if token is blacklisted
             black_list_token = Blacklist.query.filter_by(token = token).first()

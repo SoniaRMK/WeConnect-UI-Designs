@@ -1,8 +1,8 @@
-from resources import app, SQLAlchemy
+from resources import app, db
 from werkzeug.security import generate_password_hash
 
-db = SQLAlchemy(app)
-db.init_app(app)
+# db = SQLAlchemy(app)
+# db.init_app(app)
 
 class User(db.Model):
     """Model to create a user"""

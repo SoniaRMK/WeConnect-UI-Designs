@@ -60,7 +60,6 @@ class BusinessOne(Resource):
             return resp
         else:
             db.session.delete(business)
-            #db.session.commit()
             message = {'status': "Success", 'message': 'Business successfully Deleted!'}
             resp = jsonify(message)
             resp.status_code = 200
@@ -72,7 +71,7 @@ class BusinessOne(Resource):
         """edits a  business"""
 
         userid = request.data['user']
-        business = Business.query.filter_by(id=bizid).first()
+        business = Business.query.get(bizid)
         if not business:
             message = {'status': "Not Found", 'message': 'Business not registered yet!'}
             resp = jsonify(message)
@@ -82,16 +81,17 @@ class BusinessOne(Resource):
             message = {'status': "Unathorized", 'message': "You cannot Edit a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
-
-        business.business_name=business_validation.parse_args().business_name
-        business.business_profile=business_validation.parse_args().business_profile
-        business.location=business_validation.parse_args().location
-        business.category=business_validation.parse_args().category
-        db.session.commit()
-        message = {'status': "Success", 'message': 'Business successfully Updated!'}
-        resp = jsonify(message)
-        resp.status_code = 200
-        return resp
+            return resp
+        else:
+            business.business_name=business_validation.parse_args().business_name
+            business.business_profile=business_validation.parse_args().business_profile
+            business.location=business_validation.parse_args().location
+            business.category=business_validation.parse_args().category
+            db.session.commit()
+            message = {'status': "Success", 'message': 'Business successfully Updated!'}
+            resp = jsonify(message)
+            resp.status_code = 200
+            return resp
         
 
 class BusinessList(Resource):
@@ -102,8 +102,7 @@ class BusinessList(Resource):
         """creates a new business"""
 
         user = request.data['user']
-        business = Business(
-            business_name=business_validation.parse_args().business_name,
+        business = Business(business_name=business_validation.parse_args().business_name,
             business_profile=business_validation.parse_args().business_profile, 
             location=business_validation.parse_args().location, 
             category=business_validation.parse_args().category,
@@ -141,17 +140,14 @@ class BusinessList(Resource):
             businesses_result = Business.query.order_by(Business.business_name)
     
         if location_name:
-            businesses_result= Business.query.filter(Business.location.ilike('%'+location_name+'%'))
+            businesses_result= Business.query.filter(Business.location.like('%'+location_name+'%'))
 
         if category_name:
-            businesses_result= Business.query.filter(Business.category.ilike('%'+category_name+'%'))
+            businesses_result= Business.query.filter(Business.category.like('%'+category_name+'%'))
 
         businesses_result = businesses_result.paginate(page=page, per_page=limit, error_out=False)
-        
         businesses = businesses_result.items
-
-        business_list=[business.business_as_dict()
-                           for business in businesses]
+        business_list = []
         if businesses is None:
             message = {'status': "Not Found", 'message': 'No businesses found!'}
             resp = jsonify(message)

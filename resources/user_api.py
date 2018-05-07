@@ -92,7 +92,6 @@ class UserLogout(Resource):
 class UserResetPassword(Resource):
     """Class for resetting user password when the user has forgotten their password"""
     @swag_from("../APIdocs/PasswordReset.yml")
-    @token_required
     def post(self):
         """Method to help a user reset their password"""
 
