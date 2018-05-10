@@ -28,7 +28,7 @@ class BusinessOne(Resource):
 
         business = Business.query.get(bizid)
         if not business:
-            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
+            message = {'message':'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
@@ -49,18 +49,18 @@ class BusinessOne(Resource):
         userid = request.data['user']
         business = Business.query.get(bizid)
         if business is None:
-            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
+            message = {'message':'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
         if business.user_id != userid:
-            message = {'status': "Unathorized", 'message': "You cannot delete a business you didn't register!!"}
+            message = {'message':"You cannot delete a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
         else:
             db.session.delete(business)
-            message = {'status': "Success", 'message': 'Business successfully Deleted!'}
+            message = {'message':'Business successfully Deleted!'}
             resp = jsonify(message)
             resp.status_code = 200
             return resp
@@ -73,12 +73,12 @@ class BusinessOne(Resource):
         userid = request.data['user']
         business = Business.query.get(bizid)
         if not business:
-            message = {'status': "Not Found", 'message': 'Business not registered yet!'}
+            message = {'message':'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
         if business.user_id != userid:
-            message = {'status': "Unathorized", 'message': "You cannot Edit a business you didn't register!!"}
+            message = {'message':"You cannot Edit a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
@@ -86,9 +86,9 @@ class BusinessOne(Resource):
             business.business_name=business_validation.parse_args().business_name
             business.business_profile=business_validation.parse_args().business_profile
             business.location=business_validation.parse_args().location
-            business.category=business_validation.parse_args().category
+            business.category=business_validation.parse_args().categoryz
             db.session.commit()
-            message = {'status': "Success", 'message': 'Business successfully Updated!'}
+            message = {'message':'Business successfully Updated!'}
             resp = jsonify(message)
             resp.status_code = 200
             return resp
@@ -111,11 +111,11 @@ class BusinessList(Resource):
         try:
             db.session.add(business)
             db.session.commit()
-            message = {'status': "Success", 'message': 'Business registered!'}
+            message = {'message':'Business registered!'}
             resp = jsonify(message)
             resp.status_code = 201
         except:
-            message = {'status': "Conflict", 'message': 'Business already Exists!'}
+            message = {'message':'Business already Exists!'}
             resp = jsonify(message)
             resp.status_code = 409 
         
@@ -149,7 +149,7 @@ class BusinessList(Resource):
         businesses = businesses_result.items
         business_list = []
         if businesses is None:
-            message = {'status': "Not Found", 'message': 'No businesses found!'}
+            message = {'message': 'No businesses found!'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp

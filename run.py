@@ -14,3 +14,4 @@ api.add_resource(ReviewBusiness, '/api/v2/businesses/<int:bizid>/reviews')
 
 if __name__ == '__main__':
     app.run(debug=True)
+    

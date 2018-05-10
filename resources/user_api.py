@@ -17,8 +17,10 @@ class UserRegister(Resource):
     def post(self):
         """"User registration with email and password"""
 
-        user_email = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]{,100}$', request.json['user_email'])
-        user_password=user_validation.parse_args().user_password
+        user_email_input = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]{,100}$', request.json['user_email'])
+        user_password_input = user_validation.parse_args().user_password
+        user_email = user_email_input.strip()
+        user_password = user_password_input.strip()
 
         if user_email and user_password:
             user = User.query.filter_by(user_email=request.json['user_email']).first()  
@@ -26,17 +28,17 @@ class UserRegister(Resource):
                 new_user = User(user_email=request.json['user_email'],user_password=request.json['user_password'])
                 db.session.add(new_user)
                 db.session.commit()
-                message = {'status': "Success", 'message': 'User registered!',} 
+                message = {'message': 'User registered!'} 
                 resp = jsonify(message)
                 resp.status_code = 201
                 return resp 
 
-            message = {'Message':'User already exists!', 'status': "Conflict"}
+            message = {'Message':'User already exists!'}
             resp = jsonify(message)
             resp.status_code = 409
             return resp 
         else:
-            message = {'Message':'Missing/invalid Email or missing Password!', 'status': "Failed"}
+            message = {'Message':'Missing/invalid Email or missing Password!'}
             resp = jsonify(message)
             resp.status_code = 403
             return resp       
@@ -52,7 +54,7 @@ class UserLogin(Resource):
         if user_email and userpassword:
             user = User.query.filter_by(user_email = request.json['user_email']).first()
             if user is None:
-                message = {'status': "Bad Request", 'message': 'User does not Exist!'}
+                message = {'message': 'User does not Exist!'}
                 resp = jsonify(message)
                 resp.status_code = 401
                 return resp
@@ -61,12 +63,12 @@ class UserLogin(Resource):
                     token = jwt.encode({'user' : user.id, 
                                         'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
                                         app.config['SECRET_KEY'])
-                    message = {'status': "Success", 'message': 'Logged in', 'token' : token.decode('UTF-8')}
+                    message = {'message': 'Logged in', 'token' : token.decode('UTF-8')}
                     resp = jsonify(message)
                     resp.status_code = 200
                     return resp
 
-            message = {'status': "Failed", 'message': 'could not log in, wrong password'}
+            message = {'message': 'could not log in, wrong password'}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
@@ -84,7 +86,7 @@ class UserLogout(Resource):
         token_blacklist = Blacklist(token)
         db.session.add(token_blacklist)
         db.session.commit()
-        message = {'status': "Success", 'message': 'Logged out'}
+        message = {'message': 'Logged out'}
         resp = jsonify(message)
         resp.status_code = 200
         return resp
@@ -103,12 +105,12 @@ class UserResetPassword(Resource):
             if user is not None:  
                 user.user_password = generate_password_hash(request.json['user_password'], method='sha256')
                 db.session.commit()
-                message = {'status': "Success", 'message': 'Password Reset'}
+                message = {'message': 'Password Reset'}
                 resp = jsonify(message)
                 resp.status_code = 200           
                 return resp
 
-            message = {'status': "Not Found", 'message': 'User doesnot exist'}
+            message = {'message': 'User doesnot exist'}
             resp = jsonify(message)
             resp.status_code = 404
             return resp

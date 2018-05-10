@@ -17,12 +17,12 @@ class ReviewBusiness(Resource):
         user = request.data['user']
         business = Business.query.get(bizid)
         if not business:
-            message = {'status': "Not Found", 'message': "Business you're trying to review is not registered yet!"}
+            message = {'message': "Business you're trying to review is not registered yet!"}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
         if business.user_id == user:
-            message = {'status': "Unathorized", 'message': "You cannot review a business you registered!!"}
+            message = {'message': "You cannot review a business you registered!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
@@ -30,7 +30,7 @@ class ReviewBusiness(Resource):
             review = Review(review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user)
             db.session.add(review)
             db.session.commit()
-            message = {'status': "review successfully added!", 'message': "Review added successfully!!"}
+            message = {'message': "Review added successfully!!"}
             resp = jsonify(message)
             resp.status_code = 200
             return resp
@@ -42,13 +42,13 @@ class ReviewBusiness(Resource):
 
         business = Business.query.get(bizid)
         if not business:
-            message = {'status': "Not Found", 'message': "Business doesn't exist!!"}
+            message = {'message': "Business doesn't exist!!"}
             resp = jsonify(message)
             resp.status_code = 404
 
         reviews = Review.query.filter_by(business_id=bizid).all()
         if not reviews:   
-            message = {'status': "Not Found", 'message': "Business doesn't have reviews yet!!"}
+            message = {'message': "Business doesn't have reviews yet!!"}
             resp = jsonify(message)
             resp.status_code = 404
        
@@ -60,7 +60,7 @@ class ReviewBusiness(Resource):
                 'Reviewd by': rev.user_id
                  }
             output.append(review_item)
-            message = {'status': "Success", 'Reviews': output}
+            message = {'Reviews': output}
             resp = jsonify(message)
             resp.status_code = 200
         return resp
