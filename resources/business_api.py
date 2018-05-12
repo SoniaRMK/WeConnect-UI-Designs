@@ -98,6 +98,11 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 403    
             return resp  
+        elif len(business.business_name) > 60 or len(business.location) or len(business.business_name) > 60:
+            message = {'message':'Business name, category and location should not be longer than 60!'}
+            resp = jsonify(message)
+            resp.status_code = 403
+            return resp
         else:
             try:
                 db.session.commit()
@@ -127,6 +132,10 @@ class BusinessList(Resource):
         user_id=user
         if ("  " in business_name):
             message = {'message':'Too many spaces in between the business name!'}
+            resp = jsonify(message)
+            resp.status_code = 403
+        elif len(business_name) or len(location) or len(business_name) > 60:
+            message = {'message':'Business name, category and location should not be longer than 60!'}
             resp = jsonify(message)
             resp.status_code = 403
         else:
