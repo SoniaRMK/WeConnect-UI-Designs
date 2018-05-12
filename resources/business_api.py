@@ -83,15 +83,22 @@ class BusinessOne(Resource):
             resp.status_code = 401
             return resp
         else:
-            business.business_name=business_validation.parse_args().business_name
-            business.business_profile=business_validation.parse_args().business_profile
-            business.location=business_validation.parse_args().location
-            business.category=business_validation.parse_args().categoryz
-            db.session.commit()
-            message = {'message':'Business successfully Updated!'}
-            resp = jsonify(message)
-            resp.status_code = 200
-            return resp
+            business.business_name=(business_validation.parse_args().business_name).strip()
+            business.business_profile=(business_validation.parse_args().business_profile).strip()
+            business.location=(business_validation.parse_args().location).strip()
+            business.category=(business_validation.parse_args().category).strip()
+            business = Business.query.get(business.business_name)
+            if business is None:
+                db.session.commit()
+                message = {'message':'Business successfully Updated!'}
+                resp = jsonify(message)
+                resp.status_code = 200
+                return resp
+            else:
+                message = {'message':'The new Business name is already taken, Choose another name!'}
+                resp = jsonify(message)
+                resp.status_code = 409
+                return resp
         
 
 class BusinessList(Resource):

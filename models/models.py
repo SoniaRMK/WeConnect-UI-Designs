@@ -10,7 +10,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_email = db.Column(db.String(60), nullable=False, unique=True)
-    user_password = db.Column(db.String(100), nullable=False,)
+    user_password = db.Column(db.String(80), nullable=False,)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
     ), onupdate=db.func.current_timestamp())
