@@ -1,3 +1,4 @@
+import re
 from resources import *
 from flask_restful.reqparse import RequestParser
 from models.models import Business
@@ -39,7 +40,10 @@ class BusinessOne(Resource):
         output['Location'] = business.location
         output['Category'] = business.category
         
-        return jsonify({'business': output})
+        message = {'business': output}
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
 
     @swag_from("../APIdocs/DeleteBusiness.yml")
     @token_required
@@ -53,13 +57,14 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-        if business.user_id != userid:
+        elif business.user_id != userid:
             message = {'message':"You cannot delete a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
         else:
             db.session.delete(business)
+            db.session.commit()
             message = {'message':'Business successfully Deleted!'}
             resp = jsonify(message)
             resp.status_code = 200
@@ -69,7 +74,6 @@ class BusinessOne(Resource):
     @token_required
     def put(self, bizid):
         """edits a  business"""
-
         userid = request.data['user']
         business = Business.query.get(bizid)
         if not business:
@@ -82,24 +86,31 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 401
             return resp
+        
+        business.business_name=(business_validation.parse_args().business_name).strip()
+        business.business_name=(business_validation.parse_args().business_name).strip()
+        business.business_profile=(business_validation.parse_args().business_profile).strip()
+        business.location=(business_validation.parse_args().location).strip()
+        business.category=(business_validation.parse_args().category).strip()
+        
+        if ("  " in business.business_name) == True:
+            message = {'message':'Too many spaces in between the business name!'}
+            resp = jsonify(message)
+            resp.status_code = 403    
+            return resp  
         else:
-            business.business_name=(business_validation.parse_args().business_name).strip()
-            business.business_profile=(business_validation.parse_args().business_profile).strip()
-            business.location=(business_validation.parse_args().location).strip()
-            business.category=(business_validation.parse_args().category).strip()
-            business = Business.query.get(business.business_name)
-            if business is None:
+            try:
                 db.session.commit()
                 message = {'message':'Business successfully Updated!'}
                 resp = jsonify(message)
                 resp.status_code = 200
                 return resp
-            else:
+            except:
                 message = {'message':'The new Business name is already taken, Choose another name!'}
                 resp = jsonify(message)
                 resp.status_code = 409
-                return resp
-        
+                return resp  
+            
 
 class BusinessList(Resource):
     """class to create a business and get all businesses""" 
@@ -109,22 +120,27 @@ class BusinessList(Resource):
         """creates a new business"""
 
         user = request.data['user']
-        business = Business(business_name=business_validation.parse_args().business_name,
-            business_profile=business_validation.parse_args().business_profile, 
-            location=business_validation.parse_args().location, 
-            category=business_validation.parse_args().category,
-            user_id=user)
-
-        try:
-            db.session.add(business)
-            db.session.commit()
-            message = {'message':'Business registered!'}
+        business_name=(business_validation.parse_args().business_name).strip()
+        business_profile=(business_validation.parse_args().business_profile).strip()
+        location=(business_validation.parse_args().location).strip()
+        category=(business_validation.parse_args().category).strip()
+        user_id=user
+        if ("  " in business_name):
+            message = {'message':'Too many spaces in between the business name!'}
             resp = jsonify(message)
-            resp.status_code = 201
-        except:
-            message = {'message':'Business already Exists!'}
-            resp = jsonify(message)
-            resp.status_code = 409 
+            resp.status_code = 403
+        else:
+            business = Business(business_name, business_profile, location, category, user_id)
+            try:
+                db.session.add(business)
+                db.session.commit()
+                message = {'message':'Business registered!'}
+                resp = jsonify(message)
+                resp.status_code = 201
+            except:
+                message = {'message':'Business already Exists!'}
+                resp = jsonify(message)
+                resp.status_code = 409 
         
         db.session.close()
         return resp 
