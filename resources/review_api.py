@@ -6,6 +6,7 @@ from flask_restful.reqparse import RequestParser
 """Validating the arguments"""
 review_validation = RequestParser(bundle_errors=True)
 review_validation.add_argument("review_msg", type=str, required=True, help="Review Message should be a string")
+review_validation.add_argument("review_title", type=str, required=True, help="Review title should be a string")
 
 class ReviewBusiness(Resource):
     """Class for adding and viewing reviews"""
@@ -14,20 +15,20 @@ class ReviewBusiness(Resource):
     def post(self, bizid):
         """Add a review to a business""" 
 
-        user = request.data['user']
+        user_id = request.data['user']
         business = Business.query.get(bizid)
         if not business:
             message = {'message': "Business you're trying to review is not registered yet!"}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
-        if business.user_id == user:
+        if business.user_id == user_id:
             message = {'message': "You cannot review a business you registered!!"}
             resp = jsonify(message)
             resp.status_code = 401
             return resp
         else:
-            review = Review(review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user)
+            review = Review(review_title = review_validation.parse_args().review_title, review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user_id)
             db.session.add(review)
             db.session.commit()
             message = {'message': "Review added successfully!!"}
@@ -36,6 +37,7 @@ class ReviewBusiness(Resource):
             return resp
 
     """Get all reviews of a business"""
+    @token_required
     @swag_from("../APIdocs/AddReview.yml")
     def get(self, bizid):
         """Gets all reviews added to a specified business"""
