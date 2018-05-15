@@ -57,6 +57,7 @@ class ReviewBusiness(Resource):
         output = []
         for rev in reviews:
             review_item = {
+                'review Title': rev.review_title,
                 'review message': rev.review_msg,
                 'business ID': rev.business_id,
                 'Reviewd by': rev.user_id

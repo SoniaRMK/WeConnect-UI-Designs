@@ -24,6 +24,14 @@ class TestUser(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
+    def get_token(self):
+        """ Generate token using details of self.user """
+        register = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
+        login_data = json.loads(login.data.decode())
+        self.access_token = login_data["token"]
+        return self.access_token
+
     def test_register_user_success(self):
         """Ensures that a user is registered successfully"""
         response = self.app.post('/api/v2/auth/register', content_type='application/json',
@@ -78,7 +86,8 @@ class TestUser(unittest.TestCase):
         """ tests a registered user can reset their password """
         response = self.app.post('/api/v2/auth/register', content_type = 'application/json', data = json.dumps(self.user))
         response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
-                    data = json.dumps({'user_email': 'soniak@gmail.com', 'user_password': 'qouyWerty123', 'confirm_password': 'qouyWerty123'}))
+                    headers={'Authorization': 'Bearer ' + self.get_token()}, 
+                    data = json.dumps({'user_email': 'soniak@gmail.com', 'user_password': 'qouyWerty123'}))
         self.assertEqual(response.status_code, 200)
 
     def test_user_reset_password_fail(self):
@@ -86,7 +95,7 @@ class TestUser(unittest.TestCase):
         response = self.app.post('/api/v2/auth/register', content_type = 'application/json',
                         data = json.dumps(self.user))
         response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
-                                data = json.dumps({'user_email': 'karungi@gmail.com', 'user_password': 'qWerty123', 'confirm_password': 'qWerty123'}))
+                                data = json.dumps({'user_email': 'karungi@gmail.com', 'user_password': 'qWerty123'}))
         self.assertEqual(response.status_code, 404)
         
 if __name__ == "__main__":

@@ -93,12 +93,12 @@ class BusinessOne(Resource):
         business.location=(business_validation.parse_args().location).strip()
         business.category=(business_validation.parse_args().category).strip()
         
-        if ("  " in business.business_name) == True:
-            message = {'message':'Too many spaces in between the business name!'}
+        if ("  " in business.business_name) or ("  " in business.location) or ("  " in business.category):
+            message = {'message':'Too many spaces in between the business name, or location name or category name!'}
             resp = jsonify(message)
             resp.status_code = 403    
             return resp  
-        elif len(business.business_name) > 60 or len(business.location) or len(business.business_name) > 60:
+        elif len(business.business_name) > 60 or len(business.location) > 60 or len(business.category) > 60:
             message = {'message':'Business name, category and location should not be longer than 60!'}
             resp = jsonify(message)
             resp.status_code = 403
@@ -130,12 +130,12 @@ class BusinessList(Resource):
         location=(business_validation.parse_args().location).strip()
         category=(business_validation.parse_args().category).strip()
         user_id=user
-        if ("  " in business_name):
-            message = {'message':'Too many spaces in between the business name!'}
+        if ("  " in business_name) or ("  " in location) or ("  " in category):
+            message = {'message':'Too many spaces in between the business name or category or location!'}
             resp = jsonify(message)
             resp.status_code = 403
-        elif len(business_name) or len(location) or len(business_name) > 60:
-            message = {'message':'Business name, category and location should not be longer than 60!'}
+        elif len(business_name)>60 or len(category)>60 or len(location)>60:
+            message = {'message':'Business name, Category or Location should not be longer than 60!'}
             resp = jsonify(message)
             resp.status_code = 403
         else:

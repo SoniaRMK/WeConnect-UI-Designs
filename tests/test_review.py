@@ -19,7 +19,7 @@ class TestUser(unittest.TestCase):
         self.user_two = {'user_email' : 'kaynuts@gmail.com', 'user_password' : '12345678'}
         self.business = {'business_name': 'MTN', 'location' : 'Kampala', 'category' : 'Telecomm', 
                          'business_profile': 'Best Telecomm Company'}
-        self.review = {"review_msg": "Telecommunications"}
+        self.review = {"review_title":"Best Telecomm Company", "review_msg": "Telecommunications"}
         db.session.remove()
         db.drop_all()
         db.create_all()
@@ -50,7 +50,8 @@ class TestUser(unittest.TestCase):
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
         response = self.app.post('/api/v2/businesses/1/reviews', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token_two()}, data = json.dumps(self.review))
-        review_response = self.app.get('/api/v2/businesses/1/reviews', content_type = 'application/json')
+        review_response = self.app.get('/api/v2/businesses/1/reviews', headers={'Authorization': 'Bearer ' + self.get_token()}, content_type = 'application/json')
+        print(review_response.data)
         self.assertEqual(review_response.status_code, 200)
 
     def test_get_all_reviews_not_exist(self):

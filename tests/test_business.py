@@ -24,6 +24,10 @@ class TestBusiness(unittest.TestCase):
                          'business_profile': 'Best Telecomm Company'}
         self.business_edit = {'business_name': 'MTN-Uganda', 'location' : 'Kampala', 'category' : 'Telecommunications', 
                          'business_profile': 'Best Telecomm Company'}
+        self.business_edit_duplicate = {'business_name': 'MTN Kawempe', 'location' : 'Kampala', 'category' : 'Telecomm', 
+                         'business_profile': 'Best Telecomm Company'}
+        self.business_two = {'business_name': 'MTN Kawempe', 'location' : 'Kampala', 'category' : 'Telecomm', 
+                         'business_profile': 'Best Telecomm Company'}
 
     def tearDown(self):
         db.session.remove()
@@ -50,36 +54,83 @@ class TestBusiness(unittest.TestCase):
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', data = json.dumps(self.business))
         self.assertEqual(response.status_code, 404)
 
-    def test_create_business(self):
+    def test_create_business_success(self):
         """Tests whether a user can create a business"""
-        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            data = json.dumps({'business_name': 'MTN Kampala-Uganda', 'location' : 'Kampala', 'category' : 'Telecomm', 
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', headers={'Authorization': 'Bearer ' + self.get_token()}, 
+                            data = json.dumps({'business_name': 'MTN Uganda', 'location' : 'Kampala', 'category' : 'Telecomm', 
                             'business_profile': 'Best Telecomm Company'}))
         self.assertEqual(response.status_code, 201)
-
+    
     def test_create_business_already_exist(self):
         """Tests creating a business that already exists"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, data = json.dumps(self.business))
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, data = json.dumps(self.business))
         self.assertEqual(response.status_code, 409)
 
     def test_create_business_missing_values(self):
         """Tests creating a business with missing fields"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps({'businessName': 'Airtel Uganda','Category' : 'Telecomm', 
-                                'businessProfile': 'Best Telecomm Company', 'createdBy': 'Sonia'})
-                            )
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
         self.assertEqual(response.status_code, 400)
     
-    def test_editing_business(self):
+    def test_create_business_with_many_spaces_in_business_name(self):
+        """Tests creating a business with many spaces in business name"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel    Uganda','location' : 'Kampala', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_create_business_with_many_spaces_in_business_location(self):
+        """Tests creating a business with many spaces in business laocation name"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala   Road', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_create_business_with_many_spaces_in_business_category(self):
+        """Tests creating a business with many spaces in business category name"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala Road', 'category' : 'Telecomm  and   Electronics', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_create_business_with_long_name(self):
+        """Tests creating a business with a business name longer than 60 characters"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel Uganda','location' : 'Kampala', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_create_business_with_long_category_name(self):
+        """Tests creating a business with a business category longer than 60 characters"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala', 'category' : 'TelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunications', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_create_business_with_long_location_name(self):
+        """Tests creating a business with a business location longer than 60 characters"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'KampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampala', 'category' : 'Telecommunications', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_editing_business_success(self):
         """Tests editing a business"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
-        response = self.app.put('/api/v2/businesses/1', 
-                                headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business_edit), content_type = 'application/json')
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json',
+                                headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business_edit)) 
         self.assertEqual(response.status_code, 200)
 
     def test_editing_business_not_exist(self):
@@ -99,6 +150,76 @@ class TestBusiness(unittest.TestCase):
                                 data = json.dumps(self.business_edit), content_type = 'application/json')
         self.assertEqual(update_response.status_code, 401)
 
+    def test_business_edit_business_name_already_exist(self):
+        """Tests to ensure that the new business name doesn't already exist"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        register_another = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business_two))
+        update_response = self.app.put('/api/v2/businesses/1', headers={'Authorization': 'Bearer ' + self.get_token()}, 
+                                data = json.dumps(self.business_edit_duplicate), content_type = 'application/json')
+        self.assertEqual(update_response.status_code, 409)
+
+    def test_edit_business_with_many_spaces_in_business_name(self):
+        """Tests editing a business with many spaces in business name"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel    Uganda','location' : 'Kampala', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_business_with_many_spaces_in_business_location(self):
+        """Tests editing a business with many spaces in business laocation name"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala   Road', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_business_with_many_spaces_in_business_category(self):
+        """Tests editing a business with many spaces in business category name"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala Road', 'category' : 'Telecomm  and   Electronics', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_business_with_long_name(self):
+        """Tests editing a business with a business name longer than 60 characters"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel UgandaAirtel Uganda','location' : 'Kampala', 'category' : 'Telecomm', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_business_with_long_category_name(self):
+        """Tests editing a business with a business category longer than 60 characters"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'Kampala', 'category' : 'TelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunicationsTelecommunications', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_business_with_long_location_name(self):
+        """Tests creating a business with a business location longer than 60 characters"""
+        register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer '  + self.get_token()}, 
+                            data = json.dumps({'business_name': 'Airtel Uganda','location' : 'KampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampala', 'category' : 'Telecommunications', 
+                                                'business_profile': 'Best Telecomm Company'}))
+        self.assertEqual(response.status_code, 403)
+
     def test_deleting_business(self):
         """ tests a business can be deleted"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
@@ -117,16 +238,9 @@ class TestBusiness(unittest.TestCase):
         """Tests whether only a user who created a business can delete it"""
         register = self.app.post('/api/v2/businesses', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
-        delete_response = self.app.delete('/api/v2/businesses/1', headers={'Authorization': 'Bearer ' + self.get_token_two()}, content_type = 'application/json')
-        self.assertEqual(delete_response.status_code, 401)
-
-    def test_get_all_businesses(self):
-        """Test to get all businesses"""
-        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses', content_type = 'application/json')
-        pass
-        #self.assertEqual(response.status_code, 200)
+        del_response = self.app.delete('/api/v2/businesses/1', headers={'Authorization': 'Bearer ' + self.get_token_two()}, 
+                                data = json.dumps(self.business_edit), content_type = 'application/json')
+        self.assertEqual(del_response.status_code, 401)
 
     def test_get_one_business(self):
         """Test to get one business"""
@@ -141,6 +255,13 @@ class TestBusiness(unittest.TestCase):
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
         response = self.app.get('/api/v2/businesses/2', headers={'Authorization': 'Bearer ' + self.get_token()}, content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
+
+    def test_get_all_businesses(self):
+        """Test to get all businesses"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses', content_type = 'application/json')
+        pass
 
 if __name__ == "__main__":
     unittest.main()

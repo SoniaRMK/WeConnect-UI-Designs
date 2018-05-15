@@ -19,7 +19,7 @@ class UserRegister(Resource):
         user_password = user_validation.parse_args().user_password
 
         if user_email and user_password:
-            user = User.query.filter_by(user_email=request.json['user_email']).first()  
+            user = User.query.filter_by(user_email=request.json['user_email'].lower()).first()  
             if user is None:
                 new_user = User(user_email=request.json['user_email'],user_password=request.json['user_password'])
                 if len(request.json['user_email']) <= 60 and (' ' in user_password) == False:
