@@ -158,27 +158,23 @@ class BusinessList(Resource):
     def get(self):
         """Get all businesses registered"""
 
-        args = q_request_parser.parse_args()
-        q = args.get('q', None)
-        limit = args.get('limit', 10)
-        page = args.get('page', 1)
-        location_name = args.get('location', None)
-        category_name = args.get('category', None)
+        search_term=request.args.get('q', None)
+        limit=request.args.get('limit', None, type = int)
+        starting_page=request.args.get('page', 1, type = int)
+        location_name=request.args.get('location', None)
+        category_name=request.args.get('category', None)
 
-        if q:
-            q = q.lower()
-            businesses_result = Business.query.order_by(Business.business_name).filter(Business.business_name.ilike('%' + q + '%'))
-        else:
-            businesses_result = Business.query.order_by(Business.business_name)
-    
+        if search_term:
+            search_term = search_term.lower()
+            businesses = Business.query.order_by(Business.business_name).filter(Business.business_name.ilike('%' + search_term + '%'))    
         if location_name:
-            businesses_result= Business.query.filter(Business.location.like('%'+location_name+'%'))
-
+            businesses= Business.query.filter(Business.location.like('%'+location_name+'%'))
         if category_name:
-            businesses_result= Business.query.filter(Business.category.like('%'+category_name+'%'))
+            businesses= Business.query.filter(Business.category.like('%'+category_name+'%'))
 
-        businesses_result = businesses_result.paginate(page=page, per_page=limit, error_out=False)
-        businesses = businesses_result.items
+        businesses = Business.query.order_by(Business.business_name).all()
+        # businesses_result = businesses_result.paginate(page=starting_page, per_page=limit, error_out=True)
+        
         business_list = []
         if businesses is None:
             message = {'message': 'No businesses found!'}
@@ -194,11 +190,8 @@ class BusinessList(Resource):
                 'Category': business.category
                 }
             business_list.append(output)
-
-        next_page = businesses_result.next_num if businesses_result.has_next else None
-        prev_page = businesses_result.prev_num if businesses_result.has_prev else None
-        
-        businesses_returned = {'businesses': business_list, "next_page": next_page, "prev_page": prev_page}
+    
+        businesses_returned = {'businesses': business_list}
         resp = jsonify(businesses_returned)
         resp.status_code = 200
         return resp
