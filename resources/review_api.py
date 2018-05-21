@@ -29,7 +29,9 @@ class ReviewBusiness(Resource):
             resp.status_code = 401
             return resp
         else:
-            review = Review(review_title = review_validation.parse_args().review_title, review_msg = review_validation.parse_args().review_msg, business_id = bizid, user_id = user_id)
+            review = Review(review_title = review_validation.parse_args().review_title.title().strip(), 
+                            review_msg = review_validation.parse_args().review_msg.strip(), 
+                            business_id = bizid, user_id = user_id)
             db.session.add(review)
             db.session.commit()
             message = {'message': "Review added successfully!!"}

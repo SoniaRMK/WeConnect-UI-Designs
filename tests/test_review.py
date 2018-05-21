@@ -51,20 +51,22 @@ class TestUser(unittest.TestCase):
         response = self.app.post('/api/v2/businesses/1/reviews', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token_two()}, data = json.dumps(self.review))
         review_response = self.app.get('/api/v2/businesses/1/reviews', headers={'Authorization': 'Bearer ' + self.get_token()}, content_type = 'application/json')
-        print(review_response.data)
         self.assertEqual(review_response.status_code, 200)
 
     def test_get_all_reviews_not_exist(self):
         """Checks whether a business has reviews before retrieval"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses/1/reviews', content_type = 'application/json')
+        response = self.app.get('/api/v2/businesses/1/reviews', headers={'Authorization': 'Bearer ' + self.get_token()}, content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
 
-    def test_get_all_reviews_busines_not_exist(self):
-        """Checks whether a business exists before retrieving reviews"""
-        response = self.app.get('/api/v2/businesses/2/reviews', content_type = 'application/json')
-        self.assertEqual(response.status_code, 404)
+    # def test_get_all_reviews_busines_not_exist(self):
+    #     """Checks whether a business exists before retrieving reviews"""
+    #     response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+    #                         headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+    #     response = self.app.get('/api/v2/businesses/3/reviews', headers={'Authorization': 'Bearer ' + self.get_token()}, content_type = 'application/json')
+    #     self.assertIn(b'fssgs', response.data)
+    #     self.assertEqual(response.status_code, 404)
 
     def test_add_review_success(self):
         """Tests adding a review to a registered business"""

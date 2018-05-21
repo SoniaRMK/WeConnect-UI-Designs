@@ -87,11 +87,11 @@ class BusinessOne(Resource):
             resp.status_code = 401
             return resp
         
-        business.business_name=(business_validation.parse_args().business_name).strip()
+        business.business_name=(business_validation.parse_args().business_name).title().strip()
         business.business_name=(business_validation.parse_args().business_name).strip()
         business.business_profile=(business_validation.parse_args().business_profile).strip()
-        business.location=(business_validation.parse_args().location).strip()
-        business.category=(business_validation.parse_args().category).strip()
+        business.location=(business_validation.parse_args().location).title().strip()
+        business.category=(business_validation.parse_args().category).title().strip()
         
         if ("  " in business.business_name) or ("  " in business.location) or ("  " in business.category):
             message = {'message':'Too many spaces in between the business name, or location name or category name!'}
@@ -125,10 +125,10 @@ class BusinessList(Resource):
         """creates a new business"""
 
         user = request.data['user']
-        business_name=(business_validation.parse_args().business_name).strip()
+        business_name=(business_validation.parse_args().business_name).title().strip()
         business_profile=(business_validation.parse_args().business_profile).strip()
-        location=(business_validation.parse_args().location).strip()
-        category=(business_validation.parse_args().category).strip()
+        location=(business_validation.parse_args().location).title().strip()
+        category=(business_validation.parse_args().category).title().strip()
         user_id=user
         if ("  " in business_name) or ("  " in location) or ("  " in category):
             message = {'message':'Too many spaces in between the business name or category or location!'}

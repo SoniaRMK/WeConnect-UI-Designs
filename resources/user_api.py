@@ -22,7 +22,7 @@ class UserRegister(Resource):
         if user_email and user_password:
             user = User.query.filter_by(user_email=request.json['user_email'].lower()).first()  
             if user is None:
-                new_user = User(user_email=request.json['user_email'],user_password=request.json['user_password'])
+                new_user = User(user_email=request.json['user_email'].lower(),user_password=request.json['user_password'])
                 if len(request.json['user_email']) <= 60 and (' ' in user_password) == False:
                     db.session.add(new_user)
                     db.session.commit()

@@ -17,7 +17,7 @@ before_script:
 
 # Setting environment variables
 env:
-  - FLASK_CONFIG=testing
+  - DATABASE_URL=postgresql://postgres:1234567890@localhost/testdb SECRET_KEY=some_secret_value FLASK_CONFIG=testing
 
 # command to run tests
 script:

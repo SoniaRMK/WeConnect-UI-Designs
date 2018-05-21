@@ -7,3 +7,5 @@ migrations
 .pytest_cache
 *.pyc
 htmlcov
+node_modules
+package-lock.json
