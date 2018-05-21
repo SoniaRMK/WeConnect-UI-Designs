@@ -17,7 +17,7 @@ before_script:
 
 # Setting environment variables
 env:
-  - DATABASE_URL=postgresql://postgres@localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
+  - APP_SETTINGS=config.TestingConfig
 
 # command to run tests
 script:
