@@ -17,7 +17,7 @@ before_script:
 
 # Setting environment variables
 env:
-  - APP_SETTINGS=config.TestingConfig
+  - FLASK_CONFIG=testing
 
 # command to run tests
 script:
