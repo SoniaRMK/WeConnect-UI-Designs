@@ -58,7 +58,7 @@ def token_required(func):
     """Function to check for Token required"""
     @wraps(func)
     def decorated(*args, **kwargs):    
-        from models.models import Blacklist        
+        from models.blacklist_model import Blacklist        
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(' ')[1]
             #check if token is blacklisted

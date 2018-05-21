@@ -2,7 +2,8 @@ from resources import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restful.reqparse import RequestParser
 import re
-from models.models import User, Blacklist
+from models.user_model import User
+from models.blacklist_model import Blacklist
 
 
 #Validating the arguments

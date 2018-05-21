@@ -1,7 +1,7 @@
 import re
 from resources import *
 from flask_restful.reqparse import RequestParser
-from models.models import Business
+from models.business_model import Business
 
 
 #Validating the arguments
@@ -160,39 +160,9 @@ class BusinessList(Resource):
 
         search_term=request.args.get('q', None)
         limit=request.args.get('limit', None, type = int)
-        starting_page=request.args.get('page', 1, type = int)
         location_name=request.args.get('location', None)
         category_name=request.args.get('category', None)
 
-        if search_term:
-            search_term = search_term.lower()
-            businesses = Business.query.order_by(Business.business_name).filter(Business.business_name.ilike('%' + search_term + '%'))    
-        if location_name:
-            businesses= Business.query.filter(Business.location.like('%'+location_name+'%'))
-        if category_name:
-            businesses= Business.query.filter(Business.category.like('%'+category_name+'%'))
-
-        businesses = Business.query.order_by(Business.business_name).all()
-        # businesses_result = businesses_result.paginate(page=starting_page, per_page=limit, error_out=True)
-        
-        business_list = []
-        if businesses is None:
-            message = {'message': 'No businesses found!'}
-            resp = jsonify(message)
-            resp.status_code = 404
-            return resp
-        
-        for business in businesses:
-            output = {
-                'Business Name': business.business_name,
-                'Business Profile': business.business_profile,
-                'Location': business.location,
-                'Category': business.category
-                }
-            business_list.append(output)
-    
-        businesses_returned = {'businesses': business_list}
-        resp = jsonify(businesses_returned)
-        resp.status_code = 200
-        return resp
+        search_results = Business.search_businesses(search_term=search_term, location=location_name, category=category_name, limit=limit)
+        return search_results
         

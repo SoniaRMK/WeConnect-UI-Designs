@@ -1,5 +1,6 @@
 from resources import *
-from models.models import Review, Business
+from models.review_model import Review
+from models.business_model import Business
 from flask_restful.reqparse import RequestParser
 
 
