@@ -9,15 +9,15 @@ install:
   - pip install nose-cov
   - pip install -r requirements.txt
 
-# services:
-#   - postgresql
+services:
+  - postgresql
 
-# before_script:
-#   - psql -c "CREATE DATABASE testdb;" -U postgres
+before_script:
+  - psql -c "CREATE DATABASE testdb;" -U postgres
 
-# # Setting environment variables
-# env:
-#   - DATABASE_URL=postgresql://postgres:1234567890@localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
+# Setting environment variables
+env:
+  - DATABASE_URL=postgresql://postgres:1234567890@localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
 
 # command to run tests
 script:
@@ -27,9 +27,10 @@ script:
 
 # generate code climate report
 after_script:
-  - codeclimate-test-reporter
+  - codeclimate-test-reporterb
 
 # push report to coveralls.io
 after_success:
+  - coverage report
   - coveralls
   
