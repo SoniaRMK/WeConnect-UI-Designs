@@ -14,11 +14,10 @@ services:
 
 before_script:
   - psql -c "CREATE DATABASE testdb;" -U postgres
-  - psql -c "CREATE USER postgres WITH password '1234567890';" -U postgres
 
 # Setting environment variables
 env:
-  - DATABASE_URL=postgresql://postgres:1234567890@localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
+  - DATABASE_URL=postgresql://localhost/testdb SECRET_KEY=Oxa34KLncvfjKEjXkf APP_SETTINGS=config.TestingConfig
 
 # command to run tests
 script:
