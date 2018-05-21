@@ -6,3 +6,4 @@ pylintrc
 migrations
 .pytest_cache
 *.pyc
+htmlcov

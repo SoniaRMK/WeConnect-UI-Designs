@@ -44,14 +44,6 @@ class Business(db.Model):
         resp = jsonify(message)
         resp.status_code = 200
         return resp
-    
-    @staticmethod
-    def businesses_not_found():
-        """Return message when no businesses are found after a search"""
-        message = {'message': 'No businesses found!'}
-        resp = jsonify(message)
-        resp.status_code = 404
-        return resp
 
     @staticmethod
     def limit_less_zero(limit):
@@ -68,46 +60,28 @@ class Business(db.Model):
         if search_term is not None:
             """search for business based on a search term q"""
             businesses = Business.query.filter(Business.business_name.ilike("%{}%".format(search_term)))
-            if not businesses:
-                response = Business.businesses_not_found()
-                return response
             if location is not None and category is None and limit is None:
                 """filter businesses based on location"""
                 businesses = businesses.filter(Business.location.ilike("%{}%".format(location))).all()
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 businesses = Business.businesses_to_json(businesses)
                 response = Business.businesses_found_message(businesses)
                 return response
             elif category is not None and location is None and limit is None:
                 """filter businesses based on category"""
                 businesses = businesses.filter(Business.category.ilike("%{}%".format(category))).all()
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 businesses = Business.businesses_to_json(businesses)
                 response = Business.businesses_found_message(businesses)
                 return response
             elif category is not None and location is not None and limit is None:
                 """ filter business based on location and category"""
                 businesses = businesses.filter(Business.location.ilike("%{}%".format(location)))
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 businesses = businesses.filter(Business.category.ilike("%{}%".format(category))).all()
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 businesses = Business.businesses_to_json(businesses)
                 response = Business.businesses_found_message(businesses)
                 return response
             elif category is not None and limit is not None and location is None:
                 """Search for business based on category and limit is given"""
                 businesses = businesses.filter(Business.category.ilike("%{}%".format(category)))
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 try:
                     if limit <= 0:
                         response = Business.limit_less_zero(limit)
@@ -122,9 +96,6 @@ class Business(db.Model):
             elif location is not None and limit is not None and category is None:
                 """ search for business based on location"""
                 businesses = businesses.filter(Business.location.ilike("%{}%".format(location)))
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 try:
                     if limit <= 0:
                         response = Business.limit_less_zero(limit)
@@ -139,13 +110,7 @@ class Business(db.Model):
             elif location is not None and limit is not None and category is not None:
                 """search for business based on location and category and limit results per page"""
                 businesses = businesses.filter(Business.location.ilike("%{}%".format(location)))
-                if not businesses:
-                    response = Business.businesses_not_found()
-                    return response
                 businesses_result = businesses.filter(Business.category.ilike("%{}%".format(category)))
-                if not businesses_result:
-                    response = Business.businesses_not_found()
-                    return response
                 try:
                     if limit <= 0:
                         response = Business.limit_less_zero(limit)
@@ -164,9 +129,6 @@ class Business(db.Model):
                         response = Business.limit_less_zero(limit)
                         return response
                     businesses = businesses.paginate(per_page=limit, page=1, error_out=True).items
-                    if not businesses:
-                        response = Business.businesses_not_found()
-                        return response
                     businesses = Business.businesses_to_json(businesses)
                     response = Business.businesses_found_message(businesses)
                     return response
@@ -180,12 +142,9 @@ class Business(db.Model):
         else:
             """Get all businesses"""
             businesses = Business.query.all()
-            if len(businesses) == 0:
-                response = Business.businesses_not_found()
-                return response
             if limit is not None:
                 try:
-                    if limit <= 0 and isinstance(limit,str):
+                    if limit <= 0 or isinstance(limit,str):
                         response = Business.limit_less_zero(limit)
                         return response
                     businesses = Business.query.paginate(per_page=limit, page=1, error_out=True).items

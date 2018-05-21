@@ -27,7 +27,7 @@ script:
 
 # generate code climate report
 after_script:
-  - codeclimate-test-reporterb
+  - codeclimate-test-reporter
 
 # push report to coveralls.io
 after_success:

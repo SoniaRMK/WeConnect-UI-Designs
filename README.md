@@ -62,8 +62,8 @@ WeConnect provides a platform that brings businesses and individuals together. T
 
 ## Use endpoints
 
-* Run `python app/api/api_run.py` on command prompt
-* View the api on `http://127.0.0.1:5000/api/v1/`
+* Run `python run.py` on command prompt
+* View the api on `http://127.0.0.1:5000`
 * Test it's usage with postman
 
 ## Unittests
@@ -74,4 +74,4 @@ WeConnect provides a platform that brings businesses and individuals together. T
 
 Go to [WeConnect](https://soniarmk.github.io/index.html)
 
-Happy Browsing! :smile:
+Happy Coding! :smile:

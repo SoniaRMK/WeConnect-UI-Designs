@@ -257,11 +257,82 @@ class TestBusiness(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_get_all_businesses(self):
-        """Test to get all businesses"""
+        """Test to get all businesses with no parameters provided"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
         response = self.app.get('/api/v2/businesses', content_type = 'application/json')
-        pass
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term(self):
+        """Test to get all businesses with with only search term"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_limit(self):
+        """Test to get all businesses with with only limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?limit=1', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_get_all_businesses_with_search_term_and_limit(self):
+        """Test to get all businesses with with search term and limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&limit="2"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_and_location(self):
+        """Test to get all businesses with with search term and location"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&location="Kampala"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_and_category(self):
+        """Test to get all businesses with with search term and category"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&category="Construction"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_category_and_location(self):
+        """Test to get all businesses with with search term, location and category"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&category="Telecomm"&location="Kampala"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_location_and_limit(self):
+        """Test to get all businesses with with search term, location and limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&limit="2"&location="Kampala"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_category_and_limit(self):
+        """Test to get all businesses with with search term, category and limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&limit="2"&category="Construction"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_businesses_with_search_term_location_category_and_limit(self):
+        """Test to get all businesses with with search term, category, location and limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q="MTN"&limit="2"&location="Kampala"&category="Construction"', content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_limit_less_than_zero(self):
+        """Test to get all businesses with with limit"""
+        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
+                            headers={'Authorization': 'Bearer ' + self.get_token()}, data = json.dumps(self.business))
+        response = self.app.get('/api/v2/businesses?q=ganda&limit=-1', content_type = 'application/json')
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == "__main__":
     unittest.main()
