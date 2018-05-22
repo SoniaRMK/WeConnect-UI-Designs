@@ -10,7 +10,7 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     SWAGGER_UI_JSONEDITOR = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234567890@localhost/weconnect'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234567890@localhost/testdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
@@ -18,7 +18,7 @@ class TestingConfig(Config):
     DEVELOPMENT = False
     DEBUG = False
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/testdb'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234567890@localhost/testdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 app_config = {
