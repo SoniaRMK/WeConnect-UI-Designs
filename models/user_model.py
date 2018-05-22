@@ -13,8 +13,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
     ), onupdate=db.func.current_timestamp())
-    businesses = db.relationship('Business', backref='user',
-                                 lazy='dynamic')
+    businesses = db.relationship('Business', backref='user',lazy='dynamic')
     def __init__(self, user_email, user_password):
         self.user_email = user_email
         self.user_password = generate_password_hash(user_password, method='sha256')

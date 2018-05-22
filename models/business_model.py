@@ -1,5 +1,4 @@
 from resources import app, db
-from werkzeug.security import generate_password_hash
 from flask import jsonify
 
 class Business(db.Model):
@@ -16,6 +15,7 @@ class Business(db.Model):
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
     ), onupdate=db.func.current_timestamp())
     reviews = db.relationship('Review', backref='business', lazy='dynamic')
+    
     def __init__(self, business_name, business_profile, location, category, user_id):
         self.business_name = business_name
         self.business_profile = business_profile
