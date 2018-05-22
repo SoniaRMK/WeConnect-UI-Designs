@@ -73,11 +73,11 @@ class TestUser(unittest.TestCase):
                         data=json.dumps({"user_email": "afgchna@yyyy.zzz", "user_password":"qwerty hgfn"}))
         self.assertEqual(response.status_code, 403)
 
-    # def test_register_user_fail_missing_email(self):
-    #     """Ensures that a user is not registered with missing credential"""
-    #     response = self.app.post('/api/v2/auth/register', content_type='application/json', 
-    #                     data=json.dumps({"user_password": "fjkJKNKE3"}))
-    #     self.assertEqual(response.status_code, 403)
+    def test_register_user_fail_missing_email(self):
+        """Ensures that a user is not registered with missing credential"""
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', 
+                        data=json.dumps({"user_email": "", "user_password": "fjkJKNKE3"}))
+        self.assertEqual(response.status_code, 403)
 
     def test_user_login_success(self):
         """Ensures that a user logs on successfully"""
@@ -106,6 +106,25 @@ class TestUser(unittest.TestCase):
                         data=json.dumps({"user_email": "soniak@gmail.com"}))
         self.assertEqual(response.status_code, 400)
 
+    def test_login_missing_email(self):
+        """Ensures that a user can't log on with missing password"""
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/login', content_type='application/json', 
+                        data=json.dumps({"user_email": "", "user_password": "fjkJKNKE3"}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_using_blacklist_token(self):
+        """Ensures that a user can't log on with a blacklisted token"""
+        register = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
+        login = self.app.post('/api/v2/auth/login', content_type='application/json', data=json.dumps(self.user))
+        login_data = json.loads(login.data.decode())
+        access_token = login_data["token"]
+        logout = self.app.post('/api/v2/auth/logout', headers={'Authorization': 'Bearer ' + access_token}, 
+                                content_type='application/json')
+        logout = self.app.post('/api/v2/auth/logout', headers={'Authorization': 'Bearer ' + access_token}, 
+                                content_type='application/json')
+        self.assertEqual(logout.status_code, 403)
+
     def tests_user_logout(self):
         """ test a user logs out successfully """
         register = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
@@ -123,6 +142,14 @@ class TestUser(unittest.TestCase):
                     headers={'Authorization': 'Bearer ' + self.get_token()}, 
                     data = json.dumps({'user_email': 'soniak@gmail.com', 'user_password': 'qouyWerty123'}))
         self.assertEqual(response.status_code, 200)
+
+    def test_user_reset_password_invalid_token(self):
+        """ tests a registered user can reset their password """
+        response = self.app.post('/api/v2/auth/register', content_type = 'application/json', data = json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
+                    headers={'Authorization': 'Bearer ' + 'hdshdgfgfdfdf.fkjdfhjfdhjfdjd.sdjdjdjdj'}, 
+                    data = json.dumps({'user_email': 'soniak@gmail.com', 'user_password': 'qouyWerty123'}))
+        self.assertEqual(response.status_code, 401)
 
     def test_another_user_reset_password(self):
         """ tests a registered user can reset another user's password """
@@ -148,6 +175,14 @@ class TestUser(unittest.TestCase):
                     headers={'Authorization': 'Bearer ' + self.get_token()}, 
                     data = json.dumps({'user_email': 'soniak@gmail.com'}))
         self.assertEqual(response.status_code, 400)
+
+    def test_user_reset_password_missing_email(self):
+        """ tests a registered user can reset their password without providing the email"""
+        response = self.app.post('/api/v2/auth/register', content_type = 'application/json', data = json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/reset-password', content_type = 'application/json',
+                    headers={'Authorization': 'Bearer ' + self.get_token()}, 
+                    data = json.dumps({'user_email': '', 'user_password': 'qouy Werty123'}))
+        self.assertEqual(response.status_code, 403)
 
     def test_user_reset_password_fail(self):
         """ tests a non-registered user cannot reset their password """
