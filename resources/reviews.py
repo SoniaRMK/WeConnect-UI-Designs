@@ -1,13 +1,16 @@
-from resources import *
-from models.review_model import Review
-from models.business_model import Business
 from flask_restful.reqparse import RequestParser
+
+from resources import *
+from models.reviews import Review
+from models.businesses import Business
 
 
 """Validating the arguments"""
 review_validation = RequestParser(bundle_errors=True)
-review_validation.add_argument("review_msg", type=str, required=True, help="Review Message should be a string")
-review_validation.add_argument("review_title", type=str, required=True, help="Review title should be a string")
+review_validation.add_argument("review_msg", type=str, required=True, 
+                                help="Review Message is missing")
+review_validation.add_argument("review_title", type=str, required=True, 
+                                help="Review title is missing")
 
 class ReviewBusiness(Resource):
     """Class for adding and viewing reviews"""
@@ -19,7 +22,7 @@ class ReviewBusiness(Resource):
         user_id = request.data['user']
         business = Business.query.get(bizid)
         if not business:
-            message = {'message': "Business you're trying to review is not registered yet!"}
+            message = {'message': "Business you're trying to review isn't registered!"}
             resp = jsonify(message)
             resp.status_code = 404
             return resp
@@ -29,7 +32,8 @@ class ReviewBusiness(Resource):
             resp.status_code = 401
             return resp
         else:
-            review = Review(review_title = review_validation.parse_args().review_title.title().strip(), 
+            review = Review(review_title = review_validation.parse_args().\
+                            review_title.title().strip(), 
                             review_msg = review_validation.parse_args().review_msg.strip(), 
                             business_id = bizid, user_id = user_id)
             db.session.add(review)

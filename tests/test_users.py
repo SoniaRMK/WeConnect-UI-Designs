@@ -1,5 +1,6 @@
 import unittest
 import json
+
 from resources import app, db
 from run import UserRegister, UserLogin
 
@@ -73,10 +74,22 @@ class TestUser(unittest.TestCase):
                         data=json.dumps({"user_email": "afgchna@yyyy.zzz", "user_password":"qwerty hgfn"}))
         self.assertEqual(response.status_code, 403)
 
+    def test_register_user_with_short_password(self):
+        """Ensures that a user is not registered with a password having spaces in it"""
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', 
+                        data=json.dumps({"user_email": "afgchna@yyyy.zzz", "user_password":"qwerty"}))
+        self.assertEqual(response.status_code, 403)
+
     def test_register_user_fail_missing_email(self):
         """Ensures that a user is not registered with missing credential"""
         response = self.app.post('/api/v2/auth/register', content_type='application/json', 
                         data=json.dumps({"user_email": "", "user_password": "fjkJKNKE3"}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_register_user_invalid_email(self):
+        """Ensures that a user is not registered with invalid email"""
+        response = self.app.post('/api/v2/auth/register', content_type='application/json', 
+                        data=json.dumps({"user_email": "sjhhjfdhjdfhjkfdkjhdf", "user_password": "fjkJKNKE3"}))
         self.assertEqual(response.status_code, 403)
 
     def test_user_login_success(self):
@@ -110,8 +123,8 @@ class TestUser(unittest.TestCase):
         """Ensures that a user can't log on with missing password"""
         response = self.app.post('/api/v2/auth/register', content_type='application/json', data=json.dumps(self.user))
         response = self.app.post('/api/v2/auth/login', content_type='application/json', 
-                        data=json.dumps({"user_email": "", "user_password": "fjkJKNKE3"}))
-        self.assertEqual(response.status_code, 403)
+                        data=json.dumps({"user_password": "fjkJKNKE3"}))
+        self.assertEqual(response.status_code, 400)
 
     def test_using_blacklist_token(self):
         """Ensures that a user can't log on with a blacklisted token"""
