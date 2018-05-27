@@ -9,4 +9,3 @@ migrations
 htmlcov
 node_modules
 package-lock.json
-*.yml

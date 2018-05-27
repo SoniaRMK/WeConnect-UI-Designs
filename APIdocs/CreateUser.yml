@@ -1,0 +1,110 @@
+Endpoint to register a new user
+---
+tags:
+  - User
+parameters:
+  - name: body
+    description: This contains user registration details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "user_email"
+        - "user_name"
+        - "user_password"
+      properties:
+        user_email:
+          type: "string"
+          example: "soniquee@gmail.com"
+        user_name:
+          type: "string"
+          example: "soniquee"
+        user_password:
+          type: "string"
+          format: password
+          example: "Piece(O^O)!!"
+
+responses:
+  201:
+    description: User successfuly registered
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "User registered!"
+  409:
+    description: User exists!
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "User already exists!"
+  409:
+    description: Username taken!
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Username already taken, choose another one!"
+  403:
+    description: Password has spaces in it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Make sure the password has no spaces in!"
+  403:
+    description: Password has less than 8 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Make sure the password is longer than 8 characters!"
+  403:
+    description: Email has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Make sure the email is not longer than 60 characters!"
+  403:
+      description: Email not in the correct format
+      schema: 
+        type: object
+        properties:
+          message:
+            type: string
+            enum:
+              - "Enter valid email!"
+  403:
+    description: Username missing
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Username is missing!"
+  403:
+    description: Email missing
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Missing Email!"
+  

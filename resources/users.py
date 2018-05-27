@@ -13,6 +13,8 @@ user_validation.add_argument("user_password", type=str,
                             required=True, help="Password is missing")
 user_validation.add_argument("user_email", type=str,
                             required=True, help="Email is missing")
+user_validation.add_argument("user_name", type=str,
+                            required=False, help="Username is missing")
 
 class UserRegister(Resource):
     """Class to handle user registration"""
@@ -20,8 +22,9 @@ class UserRegister(Resource):
     def post(self):
         """"User registration with email and password"""
         user_email = user_validation.parse_args().user_email.strip()  
+        user_name = user_validation.parse_args().user_name.strip() 
         user_password = user_validation.parse_args().user_password.strip()        
-        if user_email and user_password:
+        if user_email and user_password and user_name:
             if (' ' in user_password):
                 message = {'Message':'Make sure the password has no spaces in!'}
                 resp = jsonify(message)
@@ -32,7 +35,6 @@ class UserRegister(Resource):
                 resp = jsonify(message)
                 resp.status_code = 403
                 return resp
-
             if len(user_email) > 60:
                 message = {'Message':'Make sure the email is not longer than 60 characters!'}
                 resp = jsonify(message)
@@ -42,15 +44,23 @@ class UserRegister(Resource):
                                 request.json['user_email'])
             if is_user:
                 user = User.query.filter_by(user_email=request.json['user_email'].\
-                                        lower()).first()  
-                if user is None:
+                                        lower()).first() 
+                username =  User.query.filter_by(user_name=request.json['user_name'].\
+                                        lower()).first()
+                if user is None and username is None:
                     new_user = User(user_email=request.json['user_email'].lower(),
+                                    user_name = request.json['user_name'].lower(),
                                     user_password=request.json['user_password'])
                     db.session.add(new_user)
                     db.session.commit()
                     message = {'message': 'User registered!'} 
                     resp = jsonify(message)
                     resp.status_code = 201
+                    return resp
+                elif username is not None:
+                    message = {'Message':'Username already taken, choose another one!'}
+                    resp = jsonify(message)
+                    resp.status_code = 409
                     return resp 
                 else:
                     message = {'Message':'User already exists!'}
@@ -62,8 +72,13 @@ class UserRegister(Resource):
                 resp = jsonify(message)
                 resp.status_code = 403
                 return resp 
+        elif user_name is None:
+            message = {'Message':'Username is missing!'}
+            resp = jsonify(message)
+            resp.status_code = 403
+            return resp 
         else:
-            message = {'Message':'Missing/invalid Email!'}
+            message = {'Message':'Missing Email!'}
             resp = jsonify(message)
             resp.status_code = 403
             return resp       

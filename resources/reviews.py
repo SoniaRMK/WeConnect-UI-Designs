@@ -3,6 +3,7 @@ from flask_restful.reqparse import RequestParser
 from resources import *
 from models.reviews import Review
 from models.businesses import Business
+from models.users import User
 
 
 """Validating the arguments"""
@@ -14,7 +15,7 @@ review_validation.add_argument("review_title", type=str, required=True,
 
 class ReviewBusiness(Resource):
     """Class for adding and viewing reviews"""
-    @swag_from("../APIdocs/ViewReviews.yml")
+    @swag_from("../APIdocs/AddReview.yml")
     @token_required
     def post(self, bizid):
         """Add a review to a business""" 
@@ -45,7 +46,7 @@ class ReviewBusiness(Resource):
 
     """Get all reviews of a business"""
     @token_required
-    @swag_from("../APIdocs/AddReview.yml")
+    @swag_from("../APIdocs/ViewReviews.yml")
     def get(self, bizid):
         """Gets all reviews added to a specified business"""
 
@@ -63,11 +64,16 @@ class ReviewBusiness(Resource):
        
         output = []
         for rev in reviews:
+            userid = rev.user_id
+            user = User.query.filter_by(id=userid).first()
+            username = user.user_name
+            business = Business.query.filter_by(id=bizid).first()
+            businessname = business.business_name
             review_item = {
-                'review Title': rev.review_title,
-                'review message': rev.review_msg,
-                'business ID': rev.business_id,
-                'Reviewd by': rev.user_id
+                'Review Title': rev.review_title,
+                'Review Message': rev.review_msg,
+                'Business Name': businessname,
+                'Reviewd By': username
                  }
             output.append(review_item)
             message = {'Reviews': output}

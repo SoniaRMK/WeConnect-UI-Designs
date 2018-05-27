@@ -1,0 +1,132 @@
+Endpoint to update business information using the business id
+---
+tags:
+  - Business
+parameters:
+  - name: token
+    description: A json web token required to view a particular business
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Business ID
+    type: string
+    in: path
+    required: true
+  - name: body
+    description: a json object with business details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "business_name"
+        - "business_profile"
+        - "category"
+        - "location"
+      properties:
+        business_name:
+          type: "string"
+          example: "MTN Uganda"
+        business_profile:
+          type: "string"
+          example: "We Provide telecommunication Solutions"
+        category:
+          type: "string"
+          example: "Telecommunications"
+        location:
+          type: "string"
+          example: "Fort-Portal"
+
+responses:
+  200:
+    description: Business successfully updated
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Business successfully Updated!"
+  404:
+    description: No business found
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "Business not registered yet!"
+  401:
+    description: Unathourised Update
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "You can't Edit a business you didn't register!!"
+  409:
+    description: Duplicate business name
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "The new Business name is already taken,\
+                            Choose another name!"
+  403:
+    description: Business name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the business name!"
+  403:
+    description: Location name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the location name!"
+  403:
+    description: Category name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the category name!"
+  403:
+    description: Business name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Business name should not be longer than 60!"
+  403:
+    description: Location name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Location should not be longer than 60!"
+  403:
+    description: Category name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Category should not be longer than 60!"

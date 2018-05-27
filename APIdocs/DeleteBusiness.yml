@@ -1,0 +1,44 @@
+Endpoint to delete business information using the business id
+---
+tags:
+  - Business
+parameters:
+  - name: token
+    description: A json web token requiredto view a particular business
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Business ID
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Business deleted
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: object
+          enum:
+            - "Business successfully Deleted!"
+  404:
+    description: No business found
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "Business not registered yet!"
+  401:
+    description: Unathourised Deletion
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "You can't delete a business you didn't register!!"

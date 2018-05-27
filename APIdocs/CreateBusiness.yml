@@ -1,0 +1,108 @@
+Endpoint to register a new business
+---
+tags:
+  - Business
+parameters:
+  - name: body
+    description: a json object with business details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "business_name"
+        - "business_profile"
+        - "category"
+        - "location"
+      properties:
+        business_name:
+          type: "string"
+          example: "MTN"
+        business_profile:
+          type: "string"
+          example: "We Provide telecommunication Solutions"
+        category:
+          type: "string"
+          example: "Telecommunications"
+        location:
+          type: "string"
+          example: "Fort Portal"
+  - name: token
+    description: A json web token required to view a particular business
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Business successfuly created
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Business registered!"
+  400:
+    description: Business already registered
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Business already Exists"
+  403:
+    description: Business name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the business name!"
+  403:
+    description: Location name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the location name!"
+  403:
+    description: Category name has more than one space within it
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Too many spaces in between the category name!"
+  403:
+    description: Business name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Business name should not be longer than 60!"
+  403:
+    description: Location name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Location should not be longer than 60!"
+  403:
+    description: Category name has more than 60 characters
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Category should not be longer than 60!"

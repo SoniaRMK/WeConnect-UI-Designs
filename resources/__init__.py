@@ -18,7 +18,8 @@ app.config.from_object('config.DevelopmentConfig')
 app.config["SWAGGER"] = {
     'swagger': '2.0',
     'title': 'WeConnect API',
-    'description': "WeConnect provides a platform that brings businesses and individuals together.\
+    'description': "WeConnect provides a platform that brings\
+                    businesses and individuals together.\
                     This platform creates awareness for businesses and gives the users the ability\
                     to write reviews about the businesses they have interacted with.",
     'basePath': '',

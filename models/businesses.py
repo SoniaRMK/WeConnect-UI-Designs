@@ -1,5 +1,6 @@
 from resources import app, db
 from flask import jsonify
+from models.users import User
 
 class Business(db.Model):
     """Model to create a business"""
@@ -30,11 +31,15 @@ class Business(db.Model):
         """Returns businesses in a JSON format"""
         businesses_results = []
         for business in businesses:
+            userid = business.user_id
+            user = User.query.filter_by(id=userid).first()
+            username = user.user_name
             output = {
                 'Business Name': business.business_name,
                 'Business Profile': business.business_profile,
                 'Location': business.location,
-                'Category': business.category
+                'Category': business.category, 
+                'Created By' : username
                 }
             businesses_results.append(output)
         return businesses_results

@@ -15,11 +15,14 @@ class TestUser(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
-        self.user = {'user_email' : 'soniak@gmail.com', 'user_password' : 'qWerty123'}
-        self.usertwo = {'user_email' : 'kaynuts@gmail.com', 'user_password' : '12345678'}
+        self.user = {'user_email' : 'soniak@gmail.com', 'user_name': 'Kaynyts000', 
+                    'user_password' : 'qWerty123'}
+        self.usertwo = {'user_email' : 'kaynuts@gmail.com', 'user_name': 'Kaynuts000', 
+                        'user_password' : '12345678'}
         self.business = {'business_name': 'MTN', 'location' : 'Kampala', 'category' : 'Telecomm', 
                          'business_profile': 'Best Telecomm Company'}
-        self.review = {"review_title":"Best Telecomm Company", "review_msg": "Telecommunications"}
+        self.review = {"review_title":"Best Telecomm Company", 
+                      "review_msg": "Telecommunications"}
         db.session.remove()
         db.drop_all()
         db.create_all()

@@ -2,6 +2,7 @@ import re
 from flask_restful.reqparse import RequestParser
 
 from models.businesses import Business
+from models.users import User
 from resources import *
 
 
@@ -32,7 +33,7 @@ class BusinessInputValidator():
     @staticmethod
     def business_input_validator(business_name, location, category):
         if ("  " in business_name):
-            message = {'message':'Too many spaces in between the business name'}
+            message = {'message':'Too many spaces in between the business name!'}
             resp = jsonify(message)
             resp.status_code = 403
         elif ("  " in location):
@@ -72,12 +73,17 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 404
             return resp
+        
+        userid = business.user_id
+        user = User.query.filter_by(id=userid).first()
+        username = user.user_name
 
         output = {}
         output['Business Name'] = business.business_name
         output['Business Profile'] = business.business_profile
         output['Location'] = business.location
         output['Category'] = business.category
+        output['Created By'] =  username
         
         message = {'business': output}
         resp = jsonify(message)
@@ -125,14 +131,14 @@ class BusinessOne(Resource):
             resp = jsonify(message)
             resp.status_code = 401
             return resp
-        
         business.business_name=(business_validation.parse_args()\
-                                .business_name).title().strip()
-        business.business_name=(business_validation.parse_args().business_name).strip()
+                                .business_name).strip()
         business.business_profile=(business_validation.parse_args()\
                                 .business_profile).strip()
-        business.location=(business_validation.parse_args().location).title().strip()
-        business.category=(business_validation.parse_args().category).title().strip()
+        business.location=(business_validation.parse_args()\
+                                .location).title().strip()
+        business.category=(business_validation.parse_args()\
+                                .category).title().strip()
         
         if ("  " in business.business_name):
             response = BusinessInputValidator.\
