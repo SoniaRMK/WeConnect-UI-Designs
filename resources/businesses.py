@@ -57,6 +57,14 @@ class BusinessInputValidator():
             resp = jsonify(message)
             resp.status_code = 403
         return resp
+    
+    @staticmethod
+    def businesses_not_found_message(business):
+        """Return Message when no business is found""" 
+        message = {'message': 'No businesses found'}
+        resp = jsonify(message)
+        resp.status_code = 404
+        return resp
 
 
 class BusinessOne(Resource):
@@ -69,10 +77,9 @@ class BusinessOne(Resource):
 
         business = Business.query.get(bizid)
         if not business:
-            message = {'message':'Business not registered yet!'}
-            resp = jsonify(message)
-            resp.status_code = 404
-            return resp
+            response = BusinessInputValidator.\
+            businesses_not_found_message(business)
+            return response
         
         userid = business.user_id
         user = User.query.filter_by(id=userid).first()
@@ -122,10 +129,9 @@ class BusinessOne(Resource):
         userid = request.data['user']
         business = Business.query.get(bizid)
         if not business:
-            message = {'message':'Business not registered yet!'}
-            resp = jsonify(message)
-            resp.status_code = 404
-            return resp
+            response = BusinessInputValidator.\
+            businesses_not_found_message(business)
+            return response
         if business.user_id != userid:
             message = {'message':"You can't Edit a business you didn't register!!"}
             resp = jsonify(message)

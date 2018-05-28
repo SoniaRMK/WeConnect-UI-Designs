@@ -53,7 +53,7 @@ class Business(db.Model):
 
     @staticmethod
     def businesses_not_found_message(businesses):
-        """Return Message when Limit is 0 or negative""" 
+        """Return Message when no business is found""" 
         message = {'message': 'No businesses found'}
         resp = jsonify(message)
         resp.status_code = 404
