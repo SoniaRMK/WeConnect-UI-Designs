@@ -71,8 +71,6 @@ class BusinessInputValidator():
         resp = jsonify(message)
         resp.status_code = 401
         return resp
-
-
 class BusinessOne(Resource):
     """Class for getting, updating and deleting a business"""
 
@@ -114,19 +112,17 @@ class BusinessOne(Resource):
             message = {'message':'Business not registered yet!'}
             resp = jsonify(message)
             resp.status_code = 404
-            return resp
         elif business.user_id != userid:
             message = {'message':"You can't delete a business you didn't register!!"}
             resp = jsonify(message)
             resp.status_code = 401
-            return resp
         else:
             db.session.delete(business)
             db.session.commit()
             message = {'message':'Business successfully Deleted!'}
             resp = jsonify(message)
             resp.status_code = 200
-            return resp
+        return resp
         
     @swag_from("../APIdocs/UpdateBusiness.yml")
     @token_required
@@ -154,46 +150,38 @@ class BusinessOne(Resource):
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response
         elif ("  " in business.location):
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response
         elif ("  " in business.category):
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response  
         elif len(business.business_name)>60:
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response
         elif len(business.category)>60:
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response
         elif len(business.location)>60:
             response = BusinessInputValidator.\
             business_input_validator(business.business_name,
                                     business.location, business.category)
-            return response
         else:
             try:
                 db.session.commit()
                 message = {'message':'Business successfully Updated!'}
-                resp = jsonify(message)
-                resp.status_code = 200
-                return resp
+                response = jsonify(message)
+                response.status_code = 200
             except:
                 message = {'message':'The new Business name is already taken,\
                             Choose another name!'}
-                resp = jsonify(message)
-                resp.status_code = 409
-                return resp  
-            
+                response = jsonify(message)
+                response.status_code = 409
+        return response       
 
 class BusinessList(Resource):
     """class to create a business and get all businesses""" 
@@ -212,27 +200,21 @@ class BusinessList(Resource):
         if ("  " in business_name):
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response
         elif ("  " in location):
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response
         elif ("  " in category):
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response   
         elif len(business_name)>60:
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response
         elif len(category)>60:
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response
         elif len(location)>60:
             response = BusinessInputValidator.\
             business_input_validator(business_name, location, category)
-            return response
         else:
             business = Business(business_name, business_profile,
                                 location, category, user_id)
@@ -240,14 +222,14 @@ class BusinessList(Resource):
                 db.session.add(business)
                 db.session.commit()
                 message = {'message':'Business registered!'}
-                resp = jsonify(message)
-                resp.status_code = 201
+                response = jsonify(message)
+                response.status_code = 201
             except:
                 message = {'message':'Business already Exists!'}
-                resp = jsonify(message)
-                resp.status_code = 409 
+                response = jsonify(message)
+                response.status_code = 409 
         db.session.close()
-        return resp 
+        return response 
     
     @token_required
     @swag_from("../APIdocs/ViewBusinesses.yml")
