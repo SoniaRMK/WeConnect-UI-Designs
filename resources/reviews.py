@@ -51,9 +51,7 @@ class ReviewBusiness(Resource):
         """Gets all reviews added to a specified business"""
         business = Business.query.get(bizid)
         if not business:
-            message = {'message': "Business doesn't exist!!"}
-            resp = jsonify(message)
-            resp.status_code = 404
+            resp = Business.businesses_not_found_message(business)
         reviews = Review.query.filter_by(business_id=bizid).all()
         if not reviews:   
             message = {'message': "Business doesn't have reviews yet!!"}
