@@ -134,12 +134,13 @@ class UserLogout(Resource):
 
 class UserResetPassword(Resource):
     """Class for resetting user password when the user has forgotten their password"""
+    
     @token_required
     @swag_from("../APIdocs/PasswordReset.yml")
     def post(self):
         """Method to help a user reset their password"""
       
-        user = request.data['user']
+        userid = request.data['user']
         user_email = user_validation.parse_args().user_email
         user_password = user_validation.parse_args().user_password
 
@@ -149,7 +150,7 @@ class UserResetPassword(Resource):
             if is_user:
                 user = User.query.filter_by(user_email=request.json['user_email']).first()
                 if user is not None: 
-                    if user.id != user:
+                    if user.id != userid:
                         message = {'message':"You cannot reset a password for another user!!"}
                         resp = jsonify(message)
                         resp.status_code = 401
