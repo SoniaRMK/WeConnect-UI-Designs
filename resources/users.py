@@ -80,6 +80,14 @@ class UserRegister(Resource):
      
 class UserLogin(Resource):
     """Class to handle user login"""
+
+    @staticmethod
+    def user_not_found():
+        message = {'message': 'User does not Exist!'}
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
+
     @swag_from("../APIdocs/LoginUser.yml")
     def post(self):
         """"User login with email and password"""
@@ -91,9 +99,7 @@ class UserLogin(Resource):
             if is_user:
                 user = User.query.filter_by(user_email=request.json['user_email']).first()  
                 if user is None:
-                    message = {'message': 'User does not Exist!'}
-                    resp = jsonify(message)
-                    resp.status_code = 401
+                    resp = UserLogin.user_not_found()
                     return resp
                 else:
                     if check_password_hash(user.user_password, request.json['user_password']):
