@@ -71,7 +71,6 @@ class Business(db.Model):
     @staticmethod
     def search_businesses(search_term="", location="", category="", limit=10):
         """Searches for businesses based on the parameters provided by the user"""
-
         if search_term is not None:
             """search for business based on a search term q"""
             businesses = Business.query.filter(Business.\
@@ -81,7 +80,7 @@ class Business(db.Model):
         if location is not None:
             """filter businesses based on location"""
             businesses = businesses.filter(Business.\
-                         location.ilike("%{}%".format(location))).all()
+                         location.ilike("%{}%".format(location)))
             businesses = Business.businesses_to_json(businesses)
             response = Business.businesses_found_message(businesses)
             if len(businesses)==0:
