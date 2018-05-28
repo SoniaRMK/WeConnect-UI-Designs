@@ -64,12 +64,10 @@ class UserRegister(Resource):
                     message = {'Message':'User already exists!'}
                     resp = jsonify(message)
                     resp.status_code = 409
-                return resp 
             else:
                 message = {'Message':'Enter valid email!'}
                 resp = jsonify(message)
                 resp.status_code = 403
-            return resp 
         elif user_name is None:
             message = {'Message':'Username is missing!'}
             resp = jsonify(message)
@@ -160,14 +158,13 @@ class UserResetPassword(Resource):
                         db.session.commit()
                         message = {'message': 'Password Reset'}
                         resp = jsonify(message)
-                        resp.status_code = 200           
-                        return resp
+                        resp.status_code = 200
                     else:
                         message = {'Message':'Invalid Password,\
                                     make sure the password has no spaces in it!'}
                         resp = jsonify(message)
                         resp.status_code = 403
-                        return resp 
+                    return resp 
                 else:
                     message = {'message': 'User doesnot exist'}
                     resp = jsonify(message)
