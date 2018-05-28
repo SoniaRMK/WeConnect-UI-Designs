@@ -63,6 +63,14 @@ class BusinessInputValidator():
         """Return Message when no business is found""" 
         resp = Business.businesses_not_found_message(business)
         return resp
+    
+    @staticmethod
+    def user_unathorised(user_id):
+        """Return Message when user is not allowed to perform a certain task""" 
+        message = {'message':"You can't Edit a business you didn't register!!"}
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
 
 
 class BusinessOne(Resource):
@@ -131,10 +139,8 @@ class BusinessOne(Resource):
             businesses_not_found(business)
             return response
         if business.user_id != userid:
-            message = {'message':"You can't Edit a business you didn't register!!"}
-            resp = jsonify(message)
-            resp.status_code = 401
-            return resp
+            response = BusinessInputValidator.user_unathorised(business.user_id)
+            return response
         business.business_name=(business_validation.parse_args()\
                                 .business_name).strip()
         business.business_profile=(business_validation.parse_args()\
