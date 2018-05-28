@@ -139,7 +139,7 @@ class UserResetPassword(Resource):
     def post(self):
         """Method to help a user reset their password"""
       
-        userid = request.data['user']
+        user = request.data['user']
         user_email = user_validation.parse_args().user_email
         user_password = user_validation.parse_args().user_password
 
@@ -149,7 +149,7 @@ class UserResetPassword(Resource):
             if is_user:
                 user = User.query.filter_by(user_email=request.json['user_email']).first()
                 if user is not None: 
-                    if user.id != userid:
+                    if user.id != user:
                         message = {'message':"You cannot reset a password for another user!!"}
                         resp = jsonify(message)
                         resp.status_code = 401
