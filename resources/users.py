@@ -56,32 +56,29 @@ class UserRegister(Resource):
                     message = {'message': 'User registered!'} 
                     resp = jsonify(message)
                     resp.status_code = 201
-                    return resp
                 elif username is not None:
                     message = {'Message':'Username already taken, choose another one!'}
                     resp = jsonify(message)
                     resp.status_code = 409
-                    return resp 
                 else:
                     message = {'Message':'User already exists!'}
                     resp = jsonify(message)
                     resp.status_code = 409
-                    return resp 
+                return resp 
             else:
                 message = {'Message':'Enter valid email!'}
                 resp = jsonify(message)
                 resp.status_code = 403
-                return resp 
+            return resp 
         elif user_name is None:
             message = {'Message':'Username is missing!'}
             resp = jsonify(message)
             resp.status_code = 403
-            return resp 
         else:
             message = {'Message':'Missing Email!'}
             resp = jsonify(message)
             resp.status_code = 403
-            return resp       
+        return resp       
      
 class UserLogin(Resource):
     """Class to handle user login"""
