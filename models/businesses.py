@@ -165,4 +165,3 @@ class Business(db.Model):
             if len(businesses) == 0:
                 response = Business.businesses_not_found_message(businesses)
             return response
-

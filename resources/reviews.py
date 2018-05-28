@@ -49,26 +49,20 @@ class ReviewBusiness(Resource):
     @swag_from("../APIdocs/ViewReviews.yml")
     def get(self, bizid):
         """Gets all reviews added to a specified business"""
-
         business = Business.query.get(bizid)
         if not business:
             message = {'message': "Business doesn't exist!!"}
             resp = jsonify(message)
             resp.status_code = 404
-
         reviews = Review.query.filter_by(business_id=bizid).all()
         if not reviews:   
             message = {'message': "Business doesn't have reviews yet!!"}
             resp = jsonify(message)
             resp.status_code = 404
-       
         output = []
         for rev in reviews:
-            userid = rev.user_id
-            user = User.query.filter_by(id=userid).first()
-            username = user.user_name
-            business = Business.query.filter_by(id=bizid).first()
-            businessname = business.business_name
+            username = User.query.filter_by(id=rev.user_id).first().user_name
+            businessname = Business.query.filter_by(id=bizid).first().business_name
             review_item = {
                 'Review Title': rev.review_title,
                 'Review Message': rev.review_msg,

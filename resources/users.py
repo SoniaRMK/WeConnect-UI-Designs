@@ -88,7 +88,6 @@ class UserLogin(Resource):
     @swag_from("../APIdocs/LoginUser.yml")
     def post(self):
         """"User login with email and password"""
-
         user_email = user_validation.parse_args().user_email
         userpassword = user_validation.parse_args().user_password
         if user_email and userpassword:
@@ -110,7 +109,6 @@ class UserLogin(Resource):
                         resp = jsonify(message)
                         resp.status_code = 200
                         return resp
-
                 message = {'message': 'could not log in, wrong password'}
                 resp = jsonify(message)
                 resp.status_code = 401
