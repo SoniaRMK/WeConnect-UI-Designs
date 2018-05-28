@@ -131,13 +131,13 @@ class TestBusiness(unittest.TestCase):
                             headers={'Authorization': 'Bearer ' + self.get_token()}, 
                             content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
-    
-    def test_get_all_businesses_with_search_term_location_and_negative_limit(self):
+
+    def test_get_all_businesses_with_negative_limit(self):
         """Test to get all businesses with with search term, location and negative limit"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, 
                             data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses?q=airtel&limit=-2&location=Kampala', 
+        response = self.app.get('/api/v2/businesses?limit=-2', 
                             headers={'Authorization': 'Bearer ' + self.get_token()}, 
                             content_type = 'application/json')
         self.assertEqual(response.status_code, 403)
@@ -152,16 +152,6 @@ class TestBusiness(unittest.TestCase):
                             content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
 
-    def test_get_all_businesses_with_search_term_category_and_negative_limit(self):
-        """Test to get all businesses with with search term, category and negative limit"""
-        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses?q=airtel&limit=-2&category=Telecomm', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            content_type = 'application/json')
-        self.assertEqual(response.status_code, 403)
-
     def test_get_all_businesses_with_search_term_location_category_and_limit(self):
         """Test to get all businesses with with search term, category, location and limit"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
@@ -172,17 +162,6 @@ class TestBusiness(unittest.TestCase):
                             headers={'Authorization': 'Bearer ' + self.get_token()}, 
                             content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
-
-    def test_get_all_businesses_with_search_term_location_category_and_negative_limit(self):
-        """Test to get all businesses with with search term, category, location and negative limit"""
-        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses?q=airtel&limit=-2&\
-                            location=Kampala&category=Telecomm', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            content_type = 'application/json')
-        self.assertEqual(response.status_code, 403)
 
     def test_get_all_businesses_with_search_term_location_category_and_limit_not_found(self):
         """Test to get all businesses with with search term, category, location and limit (no businesses found)"""
