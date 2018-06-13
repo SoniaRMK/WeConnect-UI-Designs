@@ -60,6 +60,14 @@ class TestUser(unittest.TestCase):
                             'user_name': 'Kaynuts000', 'user_password': 'qouyWerty123'}))
         self.assertEqual(response.status_code, 201)
 
+    def test_register_user_missing_username(self):
+        """Ensures that a user is registered successfully"""
+        response = self.app.post('/api/v2/auth/register', 
+                            content_type='application/json',
+                            data=json.dumps({'user_email': 'aklod@gmail.com', \
+                            'user_name': '', 'user_password': 'qouyWerty123'}))
+        self.assertEqual(response.status_code, 403)
+
     def test_register_user_exists(self):
         """Ensures that a user is not registered twice"""
         response = self.app.post('/api/v2/auth/register', 

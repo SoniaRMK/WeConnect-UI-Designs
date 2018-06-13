@@ -13,11 +13,11 @@ services:
   - postgresql
 
 before_script:
-  - psql -c "CREATE DATABASE testdb;" -U postgres
+  - psql -c "CREATE DATABASE weconnect;" -U postgres
 
 # Setting environment variables
 env:
-  - DATABASE_URL=postgresql://postgres:1234567890@localhost/testdb SECRET_KEY=some_secret_value FLASK_CONFIG=testing
+  - DATABASE_URL=postgresql://postgres:1234567890@localhost/weconnect SECRET_KEY=some_secret_value FLASK_CONFIG=testing
 
 # command to run tests
 script:

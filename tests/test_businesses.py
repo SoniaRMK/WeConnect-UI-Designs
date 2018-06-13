@@ -249,7 +249,8 @@ class TestBusiness(unittest.TestCase):
         response = self.app.put('/api/v2/businesses/1', content_type = 'application/json', 
                             headers={'Authorization': 'Bearer '  + self.get_token()}, 
                             data = json.dumps({'business_name': 'Airtel Uganda','location' :\
-                            'KampalaKampalaKmpalaKampalaKampalaKampalaKampalaKampalaKampalaKampalaKampala', 
+                            'KampalaKampalaKaaaaaaaaaaaaaaampalaKampalaKampalaKampala\
+                             KampalaKampalaKampalaKampalaKampala', 
                             'category' : 'Telecommunications', 
                             'business_profile': 'Best Telecomm Company'}))
         self.assertEqual(response.status_code, 403)

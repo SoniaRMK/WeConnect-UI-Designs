@@ -22,7 +22,7 @@ class UserRegister(Resource):
     def post(self):
         """"User registration with email and password"""
         user_email = user_validation.parse_args().user_email.strip()  
-        user_name = user_validation.parse_args().user_name.strip() 
+        user_name = user_validation.parse_args().user_name
         user_password = user_validation.parse_args().user_password.strip()        
         if user_email and user_password and user_name:
             if (' ' in user_password):
@@ -42,10 +42,11 @@ class UserRegister(Resource):
                 return resp
             is_user = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]{,60}$',
                                 request.json['user_email'])
+            user_name = user_name.strip()
             if is_user:
                 user = User.query.filter_by(user_email=request.json['user_email'].\
                                         lower()).first() 
-                username =  User.query.filter_by(user_name=request.json['user_name'].\
+                username =  User.query.filter_by(user_name=request.json['user_name'].strip().\
                                         lower()).first()
                 if user is None and username is None:
                     new_user = User(user_email=request.json['user_email'].lower(),
@@ -76,7 +77,7 @@ class UserRegister(Resource):
             message = {'Message':'Missing Email!'}
             resp = jsonify(message)
             resp.status_code = 403
-        return resp       
+        return resp             
      
 class UserLogin(Resource):
     """Class to handle user login"""
