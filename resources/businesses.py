@@ -90,11 +90,12 @@ class BusinessOne(Resource):
         username = user.user_name
 
         output = {}
-        output['Business Name'] = business.business_name
-        output['Business Profile'] = business.business_profile
+        output['id'] = business.id
+        output['BusinessName'] = business.business_name
+        output['BusinessProfile'] = business.business_profile
         output['Location'] = business.location
         output['Category'] = business.category
-        output['Created By'] =  username
+        output['CreatedBy'] =  username
         
         message = {'business': output}
         resp = jsonify(message)

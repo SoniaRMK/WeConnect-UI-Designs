@@ -35,11 +35,12 @@ class Business(db.Model):
             user = User.query.filter_by(id=userid).first()
             username = user.user_name
             output = {
-                'Business Name': business.business_name,
-                'Business Profile': business.business_profile,
+                'BusinessName': business.business_name,
+                'BusinessProfile': business.business_profile,
                 'Location': business.location,
                 'Category': business.category, 
-                'Created By' : username
+                'CreatedBy' : username,
+                'id' : business.id
                 }
             businesses_results.append(output)
         return businesses_results
@@ -74,9 +75,19 @@ class Business(db.Model):
         if search_term is not None:
             """search for business based on a search term q"""
             businesses = Business.query.filter(Business.\
-                         business_name.ilike("%{}%".format(search_term)))
+                         business_name.ilike("%{}%".format(search_term))).order_by(Business.created_at)
         else:
-            businesses = Business.query.order_by(Business.business_name)           
+            businesses = Business.query.order_by(Business.created_at)  
+        if category is not None:
+            """filter businesses based on category"""
+            businesses = businesses.filter(Business.\
+                         category.ilike("%{}%".format(category)))
+            businesses = Business.businesses_to_json(businesses)
+            response = Business.businesses_found_message(businesses)
+            if len(businesses)==0:
+                response = Business.businesses_not_found_message(businesses)
+            print("...............Ahhhhhh........")
+            return response         
         if location is not None:
             """filter businesses based on location"""
             businesses = businesses.filter(Business.\
@@ -86,17 +97,9 @@ class Business(db.Model):
             if len(businesses)==0:
                 response = Business.businesses_not_found_message(businesses)
             return response
-        if category is not None:
-            """filter businesses based on category"""
-            businesses = businesses.filter(Business.\
-                         category.ilike("%{}%".format(category))).all()
-            businesses = Business.businesses_to_json(businesses)
-            response = Business.businesses_found_message(businesses)
-            if len(businesses)==0:
-                response = Business.businesses_not_found_message(businesses)
-            return response
         if limit is not None:
             """ limit number of businesses per page"""
+            print("I am here Brenda!!!~")
             if limit <= 0:
                 response = Business.limit_less_zero(limit)
             else:
@@ -110,4 +113,6 @@ class Business(db.Model):
         response = Business.businesses_found_message(businesses)
         if len(businesses) == 0:
             response = Business.businesses_not_found_message(businesses)
+        
+        print("I am here Pink!!!~")
         return response

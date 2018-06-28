@@ -69,7 +69,7 @@ def token_required(func):
             token = request.headers['Authorization'].split(' ')[1]
             black_list_token = Blacklist.query.filter_by(token=token).first()
             if black_list_token:
-                message = {'message': 'Expired token, Login again!!'}
+                message = {'message': 'Token has already been used!!'}
                 resp = jsonify(message)
                 resp.status_code = 403
                 return resp
@@ -80,7 +80,7 @@ def token_required(func):
                     request.data = json.loads(request.data) if len(request.data) else {}
                     request.data['user'] = user
             except jwt.InvalidTokenError:
-                message = { 'message': 'Token is invalid!!'}
+                message = { 'message': 'Expired token, Login again!!!!'}
                 resp = jsonify(message)
                 resp.status_code = 401
                 return resp

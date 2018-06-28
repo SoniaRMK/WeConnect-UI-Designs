@@ -54,7 +54,7 @@ class UserRegister(Resource):
                                     user_password=request.json['user_password'])
                     db.session.add(new_user)
                     db.session.commit()
-                    message = {'message': 'User registered!'} 
+                    message = {'Message': 'User registered!'} 
                     resp = jsonify(message)
                     resp.status_code = 201
                 elif username is not None:
@@ -62,7 +62,7 @@ class UserRegister(Resource):
                     resp = jsonify(message)
                     resp.status_code = 409
                 else:
-                    message = {'Message':'User already exists!'}
+                    message = {'Message':'Email address has an account registered!'}
                     resp = jsonify(message)
                     resp.status_code = 409
             else:
@@ -94,6 +94,7 @@ class UserLogin(Resource):
         """"User login with email and password"""
         user_email = user_validation.parse_args().user_email
         userpassword = user_validation.parse_args().user_password
+        username = User.query.filter_by(user_email=user_email).first().user_name
         if user_email and userpassword:
             is_user = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]+$',
                                 request.json['user_email'])
@@ -104,10 +105,11 @@ class UserLogin(Resource):
                     return resp
                 else:
                     if check_password_hash(user.user_password, request.json['user_password']):
-                        token = jwt.encode({'user' : user.id, 
-                                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
+                        token = jwt.encode({'user' : user.id,
+                                            'username' : user.user_name, 
+                                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=130)}, 
                                             app.config['SECRET_KEY'])
-                        message = {'message': 'Logged in', 'token' : token.decode('UTF-8')}
+                        message = {'message': 'Logged in', 'token' : token.decode('UTF-8'), 'username': username}
                         resp = jsonify(message)
                         resp.status_code = 200
                         return resp
@@ -167,7 +169,7 @@ class UserResetPassword(Resource):
                         resp = jsonify(message)
                         resp.status_code = 200
                     else:
-                        message = {'Message':'Invalid Password,\
+                        message = {'message':'Invalid Password,\
                                     make sure the password has no spaces in it!'}
                         resp = jsonify(message)
                         resp.status_code = 403
@@ -178,7 +180,7 @@ class UserResetPassword(Resource):
                     resp.status_code = 404
                     return resp
         else:
-            message = {'Message':'Missing/invalid Email!'}
+            message = {'message':'Missing/invalid Email!'}
             resp = jsonify(message)
             resp.status_code = 403
             return resp 
