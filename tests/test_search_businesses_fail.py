@@ -132,16 +132,6 @@ class TestBusiness(unittest.TestCase):
                             content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
 
-    def test_get_all_businesses_with_negative_limit(self):
-        """Test to get all businesses with with search term, location and negative limit"""
-        response = self.app.post('/api/v2/businesses', content_type = 'application/json', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            data = json.dumps(self.business))
-        response = self.app.get('/api/v2/businesses?limit=-2', 
-                            headers={'Authorization': 'Bearer ' + self.get_token()}, 
-                            content_type = 'application/json')
-        self.assertEqual(response.status_code, 403)
-
     def test_get_all_businesses_with_search_term_category_and_limit(self):
         """Test to get all businesses with with search term, category and limit"""
         response = self.app.post('/api/v2/businesses', content_type = 'application/json', 

@@ -21,8 +21,8 @@ business_validation.add_argument("business_profile", type=str, required=True,
 q_request_parser = RequestParser(bundle_errors=True)
 q_request_parser.add_argument("q", type=str, required=False,
                                 help="Search term is missing")
-q_request_parser.add_argument("limit", type=int, required=False,
-                                help="Limit is missing")
+q_request_parser.add_argument("page", type=int, required=False,
+                                help="Page is missing")
 q_request_parser.add_argument("location", type=str, required=False,
                                 help="Business location filter is missing")
 q_request_parser.add_argument("category", type=str, required=False,
@@ -238,10 +238,10 @@ class BusinessList(Resource):
         """Get all businesses registered"""
 
         search_term=request.args.get('q', None)
-        limit=request.args.get('limit', None, type = int)
+        page=request.args.get('page', 1, type = int)
         location_name=request.args.get('location', None)
         category_name=request.args.get('category', None)
         search_results = Business.search_businesses(search_term=search_term,
-                                location=location_name, category=category_name, limit=limit)
+                                location=location_name, category=category_name, page=page)
         return search_results
         

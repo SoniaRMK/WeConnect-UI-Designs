@@ -18,17 +18,11 @@ before_script:
 # Setting environment variables
 env:
   - DATABASE_URL=postgresql://postgres:1234567890@localhost/weconnect SECRET_KEY=some_secret_value FLASK_CONFIG=testing
-
 # command to run tests
 script:
   - pytest
   - coverage run --source='.' manage.py test
   - coverage report
-
-# generate code climate report
-after_script:
-  - codeclimate-test-reporter
-
 # push report to coveralls.io
 after_success:
   - coverage report
