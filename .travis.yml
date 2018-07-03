@@ -19,6 +19,10 @@ before_script:
 env:
   - DATABASE_URL=postgresql://postgres:1234567890@localhost/weconnect SECRET_KEY=some_secret_value FLASK_CONFIG=testing
 
+  before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 # command to run tests
 script:
   - pytest
@@ -27,7 +31,7 @@ script:
 
 # generate code climate report
 after_script:
-  - codeclimate-test-reporter
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -r a1f2bb9c030110934ee69446a387d805d4a8d4fdfe0c1dbf3898e2ce0f36a813
 
 # push report to coveralls.io
 after_success:
