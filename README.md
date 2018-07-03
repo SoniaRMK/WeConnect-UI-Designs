@@ -1,8 +1,9 @@
 # WeConnect
 
-[![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=WeConnectAPI-v3)](https://travis-ci.org/SoniaRMK/WeConnect)
+[![Build Status](https://travis-ci.org/SoniaRMK/WeConnect.svg?branch=WeConnectAPI-DB)](https://travis-ci.org/SoniaRMK/WeConnect)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5005cc713b8de4cd9d91/maintainability)](https://codeclimate.com/github/SoniaRMK/WeConnect/maintainability)
-[![Coverage Status](https://coveralls.io/repos/github/SoniaRMK/WeConnect/badge.svg?branch=WeConnectAPI-v3)](https://coveralls.io/github/SoniaRMK/WeConnect?branch=WeConnectAPI-v3)
+[![Coverage Status](https://coveralls.io/repos/github/SoniaRMK/WeConnect/badge.svg?branch=WeConnectAPI-DB)](https://coveralls.io/github/SoniaRMK/WeConnect?branch=WeConnectAPI-DB)
+
 
 This repository contains the description, a guide on how to clone and run the platform.
 
@@ -60,8 +61,8 @@ WeConnect provides a platform that brings businesses and individuals together. T
 
 ## Use endpoints
 
-* Run `python app.py` on command prompt
-* View the api on `http://127.0.0.1:5000/api/v2`
+* Run `python run.py` on command prompt
+* View the api on `http://127.0.0.1:5000`
 * Test it's usage with postman
 
 ## Unittests
@@ -72,4 +73,4 @@ WeConnect provides a platform that brings businesses and individuals together. T
 
 Go to [WeConnect](https://soniarmk.github.io/index.html)
 
-Happy Browsing! :smile:
+Happy Coding! :smile:

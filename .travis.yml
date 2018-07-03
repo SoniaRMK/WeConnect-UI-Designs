@@ -4,12 +4,20 @@ python:
 
 # command to install dependencies
 install:
+  - pip install coverage
+  - pip install coveralls
+  - pip install nose-cov
   - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c "CREATE DATABASE weconnect;" -U postgres
 
 # Setting environment variables
 env:
-  - ENV_VAR=testing
-
+  - DATABASE_URL=postgresql://postgres:1234567890@localhost/weconnect SECRET_KEY=some_secret_value FLASK_CONFIG=testing
 # command to run tests
 script:
   - pytest

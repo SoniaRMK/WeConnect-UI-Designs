@@ -10,13 +10,13 @@ parameters:
     schema:
       type: object
       required:
-        - "userEmail"
-        - "userPassword"
+        - "user_email"
+        - "user_password"
       properties:
-        userEmail:
+        user_email:
           type: "string"
           example: "soniquee@gmail.com"
-        userPassword:
+        user_password:
           type: "string"
           format: password
           example: "Piece(O^O)!!"
@@ -29,12 +29,21 @@ responses:
       properties:
         token:
           type: string
-  400:
-    description: User Login failed
+  401:
+    description: User not found
     schema: 
       type: object
       properties:
         message:
           type: string
           enum:
-            - "Wrong Password and/or Email"
+            - "User does not Exist!"
+  401:
+    description: wrong password
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "could not log in, wrong password"

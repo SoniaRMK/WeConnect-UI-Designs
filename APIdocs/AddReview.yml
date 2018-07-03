@@ -3,8 +3,8 @@ Endpoint to review business information using business id
 tags:
   - Review
 parameters:
-  - name: Token
-    description: A json web token required to view reviews for a particular business
+  - name: token
+    description: A json web token required to view reviews for a business
     type: string
     in: header
     required: true
@@ -20,11 +20,15 @@ parameters:
     schema:
       type: object
       required:
-        - "reviewMsg"
+        - "review_title"
+        - "review_msg"
       properties:
-        review_summary:
+        review_title:
           type: "string"
           example: "Awesome Customer Service"
+        review_msg:
+          type: "string"
+          example: "I was served within 5 minutes of arrival!"
 
 responses:
   200:
@@ -34,12 +38,23 @@ responses:
       properties:
         "message":
           type: string
+          enum:
+            - "Review added successfully!!"
   404:
-    description: No businesses found
+    description: No business found
     schema: 
       type: object
       properties:
         "Message":
           type: string
           enum:
-            - "Business does not exist"
+            - "Business you're trying to review isn't registered!"
+  401:
+    description: Unathorized
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "You cannot review a business you registered!!"

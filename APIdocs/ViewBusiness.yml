@@ -3,7 +3,7 @@ Endpoint to view a registered business
 tags:
   - Business
 parameters:
-  - name: Token
+  - name: token
     description: A json web token required to view a particular business
     type: string
     in: header

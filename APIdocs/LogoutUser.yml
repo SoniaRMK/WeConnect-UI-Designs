@@ -2,12 +2,12 @@ Endpoint to logout a user
 ---
 tags:
   - User
-# parameters:
-#   - name: Token
-#     description: A json web token required to sucessfully logout
-#     type: string
-#     in: header
-#     required: true
+parameters:
+  - name: token
+    description: A json web token required to sucessfully logout
+    type: string
+    in: header
+    required: true
 
 responses:
   200:
@@ -18,4 +18,4 @@ responses:
         message:
           type: string
           enum:
-            - "Successfully logged out"
+            - "Logged out"
