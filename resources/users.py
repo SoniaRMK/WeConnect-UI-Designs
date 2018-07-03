@@ -94,7 +94,6 @@ class UserLogin(Resource):
         """"User login with email and password"""
         user_email = user_validation.parse_args().user_email
         userpassword = user_validation.parse_args().user_password
-        username = User.query.filter_by(user_email=user_email).first().user_name
         if user_email and userpassword:
             is_user = re.match('^[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z0-9.]+$',
                                 request.json['user_email'])
@@ -109,7 +108,7 @@ class UserLogin(Resource):
                                             'username' : user.user_name, 
                                             'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=130)}, 
                                             app.config['SECRET_KEY'])
-                        message = {'message': 'Logged in', 'token' : token.decode('UTF-8'), 'username': username}
+                        message = {'message': 'Logged in', 'token' : token.decode('UTF-8')}
                         resp = jsonify(message)
                         resp.status_code = 200
                         return resp

@@ -15,7 +15,8 @@ class Business(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(
     ), onupdate=db.func.current_timestamp())
-    reviews = db.relationship('Review', backref='business', lazy='dynamic')
+    reviews = db.relationship('Review', backref='business', lazy='dynamic', 
+                            cascade="all, delete-orphan")
     
     def __init__(self, business_name, business_profile,\
                  location, category, user_id):
@@ -70,49 +71,38 @@ class Business(db.Model):
             return resp
         
     @staticmethod
-    def search_businesses(search_term="", location="", category="", limit=10):
+    def search_businesses(search_term="", location="", category="", page=1):
         """Searches for businesses based on the parameters provided by the user"""
-        if search_term is not None:
+        if search_term:
             """search for business based on a search term q"""
             businesses = Business.query.filter(Business.\
                          business_name.ilike("%{}%".format(search_term))).order_by(Business.created_at)
         else:
             businesses = Business.query.order_by(Business.created_at)  
-        if category is not None:
+        if category:
             """filter businesses based on category"""
             businesses = businesses.filter(Business.\
-                         category.ilike("%{}%".format(category)))
-            businesses = Business.businesses_to_json(businesses)
-            response = Business.businesses_found_message(businesses)
-            if len(businesses)==0:
-                response = Business.businesses_not_found_message(businesses)
-            print("...............Ahhhhhh........")
-            return response         
-        if location is not None:
+                         category.ilike("%{}%".format(category)))        
+        if location:
             """filter businesses based on location"""
             businesses = businesses.filter(Business.\
                          location.ilike("%{}%".format(location)))
-            businesses = Business.businesses_to_json(businesses)
-            response = Business.businesses_found_message(businesses)
-            if len(businesses)==0:
-                response = Business.businesses_not_found_message(businesses)
-            return response
-        if limit is not None:
-            """ limit number of businesses per page"""
-            print("I am here Brenda!!!~")
-            if limit <= 0:
-                response = Business.limit_less_zero(limit)
-            else:
-                businesses = businesses.paginate(per_page=limit, page=1, error_out=True).items
-                businesses = Business.businesses_to_json(businesses)
-                response = Business.businesses_found_message(businesses)
-                if len(businesses) == 0:
-                    response = Business.businesses_not_found_message(businesses)
-            return response
+
+        businesses_list = businesses.paginate(per_page=3, page=page, error_out=False)
+        businesses = businesses_list.items
+        next_page = businesses_list.next_num if businesses_list.has_next else None
+        prev_page = businesses_list.prev_num if businesses_list.has_prev else None
+        total_pages = businesses_list.pages
+        current_page = businesses_list.page
         businesses = Business.businesses_to_json(businesses)
-        response = Business.businesses_found_message(businesses)
+        message = {'Businesses': businesses, 
+                   'prevPage': prev_page, 
+                   'nextPage' : next_page,
+                   'totalPages' : total_pages,
+                   'currentPage' : current_page
+                }
+        response = jsonify(message)
+        response.status_code = 200
         if len(businesses) == 0:
             response = Business.businesses_not_found_message(businesses)
-        
-        print("I am here Pink!!!~")
         return response
