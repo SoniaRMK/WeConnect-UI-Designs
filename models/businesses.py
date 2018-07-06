@@ -87,7 +87,6 @@ class Business(db.Model):
             """filter businesses based on location"""
             businesses = businesses.filter(Business.\
                          location.ilike("%{}%".format(location)))
-
         businesses_list = businesses.paginate(per_page=3, page=page, error_out=False)
         businesses = businesses_list.items
         next_page = businesses_list.next_num if businesses_list.has_next else None

@@ -25,6 +25,4 @@ script:
   - coverage report
 # push report to coveralls.io
 after_success:
-  - coverage report
   - coveralls
-  

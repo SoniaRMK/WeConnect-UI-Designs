@@ -3,9 +3,7 @@ Env
 __pycache__
 .vscode
 pylintrc
-migrations
-.pytest_cache
-*.pyc
 htmlcov
-node_modules
-package-lock.json
+.pytest_cache/
+migrations/
+resources/__init__.pyc
