@@ -87,15 +87,18 @@ class Business(db.Model):
             """filter businesses based on location"""
             businesses = businesses.filter(Business.\
                          location.ilike("%{}%".format(location)))
-
-        businesses_list = businesses.paginate(per_page=2, page=page, error_out=False)
+        businesses_list = businesses.paginate(per_page=3, page=page, error_out=False)
         businesses = businesses_list.items
         next_page = businesses_list.next_num if businesses_list.has_next else None
         prev_page = businesses_list.prev_num if businesses_list.has_prev else None
+        total_pages = businesses_list.pages
+        current_page = businesses_list.page
         businesses = Business.businesses_to_json(businesses)
         message = {'Businesses': businesses, 
                    'prevPage': prev_page, 
-                   'nextPage' : next_page
+                   'nextPage' : next_page,
+                   'totalPages' : total_pages,
+                   'currentPage' : current_page
                 }
         response = jsonify(message)
         response.status_code = 200

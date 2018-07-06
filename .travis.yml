@@ -23,11 +23,6 @@ script:
   - pytest
   - coverage run --source='.' manage.py test
   - coverage report
-
-# generate code climate report
-after_script:
-  - codeclimate-test-reporter
-
 # push report to coveralls.io
 after_success:
   - coveralls

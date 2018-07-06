@@ -288,6 +288,17 @@ class TestUser(unittest.TestCase):
                             data = json.dumps({'user_email': 'karungi@gmail.com', 
                             'user_password': 'qWerty123'}))
         self.assertEqual(response.status_code, 404)
+
+    def test_user_login_fail(self):
+        """Ensures that a user can't log on when not registered"""
+        response = self.app.post('/api/v2/auth/register', 
+                            content_type='application/json', 
+                            data=json.dumps(self.user))
+        response = self.app.post('/api/v2/auth/login', 
+                            content_type='application/json', 
+                            data=json.dumps({"user_email": "sonifdggak1234@gmail.com", 
+                            "user_password": "fdfghh"}))
+        self.assertEqual(response.status_code, 401)
         
 if __name__ == "__main__":
     unittest.main()
