@@ -18,7 +18,7 @@ email-validator==1.0.2
 enum34==1.1.6
 flasgger==0.8.1
 Flask==0.12.2
-Flask-Cors==3.0.4
+Flask-Cors==3.0.9
 Flask-JWT==0.3.2
 Flask-JWT-Extended==3.7.1
 Flask-Migrate==2.1.1
